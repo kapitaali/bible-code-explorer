@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gematria Reference Tables — Bible Code Explorer</title>
+  <style>
+    :root {
+      --primary: #2c3e50;
+      --secondary: #3498db;
+      --accent: #e74c3c;
+      --bg: #ecf0f1;
+      --border: #bdc3c7;
+      --highlight: #f39c12;
+      --success: #27ae60;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--bg);
+      color: var(--primary);
+      line-height: 1.6;
+    }
+
+    /* ---- HEADER ---- */
+    header {
+      background: var(--primary);
+      color: white;
+      padding: 1.2rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+    header h1 { font-size: 1.4rem; }
+    header a {
+      color: rgba(255,255,255,0.8);
+      text-decoration: none;
+      font-size: 0.9rem;
+      border: 1px solid rgba(255,255,255,0.4);
+      padding: 0.4rem 0.9rem;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    header a:hover { background: rgba(255,255,255,0.15); color: white; }
+
+    /* ---- LAYOUT ---- */
+    .page-wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 4rem;
+    }
+
+    .intro {
+      background: white;
+      border-radius: 8px;
+      padding: 1.2rem 1.5rem;
+      margin-bottom: 2rem;
+      border-left: 4px solid var(--secondary);
+      font-size: 0.95rem;
+      color: #555;
+    }
+
+    /* ---- LANGUAGE TABS ---- */
+    .lang-tabs {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.5rem;
+    }
+    .lang-tab {
+      padding: 0.6rem 1.3rem;
+      border: 2px solid var(--border);
+      background: white;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+    .lang-tab:hover { border-color: var(--secondary); color: var(--secondary); }
+    .lang-tab.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    /* ---- SECTION ---- */
+    .lang-section { display: none; }
+    .lang-section.active { display: block; }
+
+    .section-intro {
+      background: white;
+      border-radius: 8px;
+      padding: 1rem 1.5rem;
+      margin-bottom: 1.5rem;
+      font-size: 0.9rem;
+      color: #555;
+      border: 1px solid var(--border);
+    }
+    .section-intro h2 {
+      color: var(--primary);
+      margin-bottom: 0.4rem;
+      font-size: 1.2rem;
+    }
+
+    /* ---- SYSTEM CARDS ---- */
+    .system-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .system-card {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    .system-card-header {
+      background: var(--primary);
+      color: white;
+      padding: 0.8rem 1.2rem;
+    }
+    .system-card-header h3 { font-size: 1rem; margin-bottom: 0.2rem; }
+    .system-card-header p { font-size: 0.78rem; opacity: 0.8; line-height: 1.4; }
+
+    /* ---- LETTER TABLE ---- */
+    .letter-table {
+      display: flex;
+      flex-wrap: wrap;
+      padding: 1rem;
+      gap: 0.4rem;
+    }
+
+    .letter-cell {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 52px;
+      height: 52px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: #fafafa;
+      transition: all 0.15s;
+      cursor: default;
+      position: relative;
+    }
+
+    .letter-cell:hover {
+      background: var(--secondary);
+      color: white;
+      border-color: var(--secondary);
+      transform: scale(1.08);
+      z-index: 2;
+      box-shadow: 0 3px 8px rgba(52,152,219,0.3);
+    }
+
+    .letter-cell .glyph {
+      font-size: 1.3rem;
+      font-weight: bold;
+      line-height: 1.2;
+      font-family: 'Courier New', monospace;
+    }
+
+    .letter-cell .val {
+      font-size: 0.7rem;
+      color: var(--accent);
+      font-weight: 700;
+      font-family: 'Courier New', monospace;
+    }
+
+    .letter-cell:hover .val { color: rgba(255,255,255,0.9); }
+
+    .letter-cell.zero-val {
+      opacity: 0.45;
+    }
+    .letter-cell.zero-val .val { color: #aaa; }
+
+    .letter-cell.final-form {
+      border-style: dashed;
+      border-color: var(--highlight);
+    }
+
+    /* ---- FULL TABLE VIEW ---- */
+    .full-table-toggle {
+      margin: 0 1rem 1rem;
+      padding: 0.4rem 0.8rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.82rem;
+      color: var(--primary);
+      transition: background 0.2s;
+    }
+    .full-table-toggle:hover { background: var(--border); }
+
+    .full-table {
+      display: none;
+      margin: 0 1rem 1rem;
+      border-collapse: collapse;
+      width: calc(100% - 2rem);
+      font-size: 0.85rem;
+    }
+    .full-table.open { display: table; }
+    .full-table th {
+      background: var(--bg);
+      padding: 0.4rem 0.6rem;
+      text-align: left;
+      border: 1px solid var(--border);
+      font-weight: 600;
+    }
+    .full-table td {
+      padding: 0.35rem 0.6rem;
+      border: 1px solid var(--border);
+      font-family: 'Courier New', monospace;
+    }
+    .full-table tr:nth-child(even) td { background: #fafafa; }
+    .full-table .val-col { color: var(--accent); font-weight: bold; text-align: right; }
+
+    /* ---- CALCULATOR ---- */
+    .calculator-section {
+      background: white;
+      border-radius: 10px;
+      padding: 1.5rem;
+      margin-top: 2rem;
+      border: 1px solid var(--border);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .calculator-section h2 {
+      margin-bottom: 1rem;
+      color: var(--primary);
+    }
+    .calc-row {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      margin-bottom: 1rem;
+    }
+    .calc-row label { font-size: 0.9rem; font-weight: 500; }
+    .calc-row input[type="text"] {
+      padding: 0.55rem 0.8rem;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-size: 1rem;
+      width: 220px;
+    }
+    .calc-row select {
+      padding: 0.55rem 0.8rem;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-size: 0.9rem;
+    }
+    #calc-result {
+      margin-top: 0.75rem;
+      padding: 1rem 1.2rem;
+      background: var(--primary);
+      color: white;
+      border-radius: 8px;
+      display: none;
+    }
+    #calc-result .big-val {
+      font-size: 2rem;
+      font-weight: 700;
+      font-family: 'Courier New', monospace;
+    }
+    #calc-result .breakdown-line {
+      font-size: 0.82rem;
+      opacity: 0.85;
+      margin-top: 0.4rem;
+      line-height: 2;
+      font-family: 'Courier New', monospace;
+    }
+    #calc-result .root-line {
+      font-size: 0.78rem;
+      opacity: 0.65;
+      margin-top: 0.2rem;
+    }
+
+    /* ---- NOTES TABLE ---- */
+    .notes-section {
+      background: white;
+      border-radius: 10px;
+      padding: 1.5rem;
+      margin-top: 2rem;
+      border: 1px solid var(--border);
+    }
+    .notes-section h2 { margin-bottom: 1rem; }
+    .notes-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+    .notes-table th {
+      background: var(--primary);
+      color: white;
+      padding: 0.5rem 0.8rem;
+      text-align: left;
+    }
+    .notes-table td {
+      padding: 0.5rem 0.8rem;
+      border-bottom: 1px solid var(--bg);
+      vertical-align: top;
+    }
+    .notes-table tr:nth-child(even) td { background: #fafafa; }
+
+    /* ---- RTL support ---- */
+    .rtl-glyph { direction: rtl; unicode-bidi: bidi-override; }
+
+    /* ---- RESPONSIVE ---- */
+    @media (max-width: 768px) {
+      .system-grid { grid-template-columns: 1fr; }
+      header { flex-direction: column; gap: 0.75rem; text-align: center; }
+      .calc-row { flex-direction: column; align-items: stretch; }
+      .calc-row input[type="text"], .calc-row select { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>🔢 Gematria Reference Tables</h1>
+  <a href="index.html">← Back to Bible Code Explorer</a>
+</header>
+
+<div class="page-wrap">
+
+  <div class="intro">
+    This page shows the exact numeric value assigned to every character in each gematria system used by the Bible Code Explorer.
+    Hover over any letter cell to see its value highlighted. Click <strong>Show full table</strong> inside a card for a sortable list view.
+    Use the <strong>Calculator</strong> at the bottom to compute any word or phrase in any system.
+  </div>
+
+  <!-- LANGUAGE TABS -->
+  <div class="lang-tabs">
+    <button class="lang-tab active" data-lang="hebrew">Hebrew</button>
+    <button class="lang-tab" data-lang="greek">Greek</button>
+    <button class="lang-tab" data-lang="latin">Latin</button>
+    <button class="lang-tab" data-lang="english">English</button>
+    <button class="lang-tab" data-lang="finnish">Finnish</button>
+  </div>
+
+  <!-- ========================================================
+       HEBREW
+       ======================================================== -->
+  <div class="lang-section active" id="lang-hebrew">
+    <div class="section-intro">
+      <h2>Hebrew Gematria</h2>
+      <p>Three systems are provided. <strong>Mispar Hechrachi</strong> is the classical standard used in rabbinic literature.
+         <strong>Mispar Gadol</strong> elevates the five final (sofit) letter forms to 500–900.
+         <strong>Mispar Katan</strong> reduces each letter to a single digit by collapsing place values.
+         Dashed-border cells indicate final (sofit) forms.</p>
+    </div>
+    <div class="system-grid" id="hebrew-grid"></div>
+  </div>
+
+  <!-- ========================================================
+       GREEK
+       ======================================================== -->
+  <div class="lang-section" id="lang-greek">
+    <div class="section-intro">
+      <h2>Greek Isopsephy</h2>
+      <p>Classical Greek uses a non-consecutive numbering because the original 27-letter alphabet included three archaic letters
+         (Digamma=6, Koppa=90, Sampi=900) that are no longer used. The modern 24-letter alphabet therefore skips 6, 90, and 900.
+         The Bible Code Explorer normalises all text to uppercase and removes diacritics before calculation.</p>
+    </div>
+    <div class="system-grid" id="greek-grid"></div>
+  </div>
+
+  <!-- ========================================================
+       LATIN
+       ======================================================== -->
+  <div class="lang-section" id="lang-latin">
+    <div class="section-intro">
+      <h2>Latin Gematria</h2>
+      <p><strong>Ordinal (A=1)</strong> assigns sequential values to all 26 letters and is the most practical system for ELS work.
+         <strong>Literae Notae</strong> is the historical Roman system where only letters that double as Roman numerals have values
+         (I=1, V=5, X=10, L=50, C=100, D=500, M=1000); all other letters are 0. Grey cells indicate zero-value letters.</p>
+    </div>
+    <div class="system-grid" id="latin-grid"></div>
+  </div>
+
+  <!-- ========================================================
+       ENGLISH
+       ======================================================== -->
+  <div class="lang-section" id="lang-english">
+    <div class="section-intro">
+      <h2>English Gematria</h2>
+      <p><strong>Standard / Ordinal</strong> (A=1…Z=26) is by far the most commonly used English system.
+         <strong>Reduction</strong> maps A–I to 1–9, J–R to 1–9, S–Z to 1–8 — essentially a digital root per letter.
+         <strong>Reverse</strong> inverts the alphabet so Z=1 and A=26.</p>
+    </div>
+    <div class="system-grid" id="english-grid"></div>
+  </div>
+
+  <!-- ========================================================
+       FINNISH
+       ======================================================== -->
+  <div class="lang-section" id="lang-finnish">
+    <div class="section-intro">
+      <h2>Finnish Gematria</h2>
+      <p>Finnish uses the same 26 Latin letters plus three extras at the end of the alphabet: <strong>Å=27, Ä=28, Ö=29</strong>.
+         These are treated as fully distinct letters, not variants. The Reduction system maps all 29 letters to values 1–9
+         using the same modulo-9 logic applied to the full Finnish alphabet order.</p>
+    </div>
+    <div class="system-grid" id="finnish-grid"></div>
+  </div>
+
+  <!-- ========================================================
+       CALCULATOR
+       ======================================================== -->
+  <div class="calculator-section">
+    <h2>🧮 Calculator</h2>
+    <div class="calc-row">
+      <div>
+        <label>Word or phrase</label><br>
+        <input type="text" id="ref-calc-input" placeholder="Type anything…">
+      </div>
+      <div>
+        <label>System</label><br>
+        <select id="ref-calc-system"></select>
+      </div>
+    </div>
+    <div id="calc-result">
+      <div class="big-val" id="calc-big-val">0</div>
+      <div class="breakdown-line" id="calc-breakdown"></div>
+      <div class="root-line" id="calc-root"></div>
+    </div>
+  </div>
+
+  <!-- ========================================================
+       SYSTEM NOTES TABLE
+       ======================================================== -->
+  <div class="notes-section">
+    <h2>📋 System Quick-Reference</h2>
+    <table class="notes-table" id="notes-table">
+      <thead>
+        <tr>
+          <th>System key</th>
+          <th>Language</th>
+          <th>Name</th>
+          <th>Letter count</th>
+          <th>Value range</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody id="notes-tbody"></tbody>
+    </table>
+  </div>
+
+</div><!-- /page-wrap -->
+
+<!-- Load the engine -->
+<script src="js/core/gematriaEngine.js"></script>
+
+<script>
+// ============================================================
+// Page initialisation
+// ============================================================
+const engine = new GematriaEngine();
+
+// ---- Tab switching ----
+document.querySelectorAll('.lang-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.lang-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.lang-section').forEach(s => s.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('lang-' + tab.dataset.lang).classList.add('active');
+  });
+});
+
+// ---- Build system cards ----
+function buildSystemCard(systemKey) {
+  const table = engine.tables[systemKey];
+  if (!table) return '';
+
+  const entries = Object.entries(table.map);
+
+  // Detect RTL (Hebrew)
+  const isRTL = systemKey.startsWith('hebrew');
+
+  // Detect final forms (Hebrew sofit)
+  const finalForms = isRTL ? new Set(['ך','ם','ן','ף','ץ']) : new Set();
+
+  // Build visual cell grid
+  const cellsHtml = entries.map(([letter, value]) => {
+    const isZero = value === 0;
+    const isFinal = finalForms.has(letter);
+    const rtlClass = isRTL ? 'rtl-glyph' : '';
+    const zeroClass = isZero ? 'zero-val' : '';
+    const finalClass = isFinal ? 'final-form' : '';
+    return `
+      <div class="letter-cell ${zeroClass} ${finalClass}" title="${letter} = ${value}">
+        <span class="glyph ${rtlClass}">${letter}</span>
+        <span class="val">${value}</span>
+      </div>`;
+  }).join('');
+
+  // Build full table rows
+  const tableRowsHtml = entries.map(([letter, value]) => `
+    <tr>
+      <td style="font-size:1.2rem;${isRTL?'direction:rtl;':''}">${letter}</td>
+      <td>${getLetterName(letter, systemKey)}</td>
+      <td class="val-col">${value}</td>
+    </tr>`).join('');
+
+  const cardId = 'card-' + systemKey;
+  const tableId = 'table-' + systemKey;
+
+  return `
+    <div class="system-card" id="${cardId}">
+      <div class="system-card-header">
+        <h3>${table.name}</h3>
+        <p>${table.description}</p>
+      </div>
+      <div class="letter-table">${cellsHtml}</div>
+      <button class="full-table-toggle" onclick="toggleTable('${tableId}', this)">
+        ▶ Show full table
+      </button>
+      <table class="full-table" id="${tableId}">
+        <thead><tr><th>Letter</th><th>Name / transliteration</th><th>Value</th></tr></thead>
+        <tbody>${tableRowsHtml}</tbody>
+      </table>
+    </div>`;
+}
+
+function toggleTable(tableId, btn) {
+  const tbl = document.getElementById(tableId);
+  if (tbl.classList.toggle('open')) {
+    btn.textContent = '▼ Hide full table';
+  } else {
+    btn.textContent = '▶ Show full table';
+  }
+}
+
+// ---- Letter name lookup ----
+const hebrewNames = {
+  'א':'Alef','ב':'Bet','ג':'Gimel','ד':'Dalet','ה':'He',
+  'ו':'Vav','ז':'Zayin','ח':'Het','ט':'Tet','י':'Yod',
+  'כ':'Kaf','ל':'Lamed','מ':'Mem','נ':'Nun','ס':'Samekh',
+  'ע':'Ayin','פ':'Pe','צ':'Tsadi','ק':'Qof','ר':'Resh',
+  'ש':'Shin','ת':'Tav',
+  'ך':'Kaf (final)','ם':'Mem (final)','ן':'Nun (final)',
+  'ף':'Pe (final)','ץ':'Tsadi (final)'
+};
+const greekNames = {
+  'Α':'Alpha','Β':'Beta','Γ':'Gamma','Δ':'Delta','Ε':'Epsilon',
+  'Ζ':'Zeta','Η':'Eta','Θ':'Theta','Ι':'Iota','Κ':'Kappa',
+  'Λ':'Lambda','Μ':'Mu','Ν':'Nu','Ξ':'Xi','Ο':'Omicron',
+  'Π':'Pi','Ρ':'Rho','Σ':'Sigma','Τ':'Tau','Υ':'Upsilon',
+  'Φ':'Phi','Χ':'Chi','Ψ':'Psi','Ω':'Omega'
+};
+const finnishExtras = { 'Å':'Å (ao)', 'Ä':'Ä (a-umlaut)', 'Ö':'Ö (o-umlaut)' };
+
+function getLetterName(letter, system) {
+  if (system.startsWith('hebrew')) return hebrewNames[letter] || letter;
+  if (system.startsWith('greek'))  return greekNames[letter.toUpperCase()] || letter;
+  if (system.startsWith('finnish')) return finnishExtras[letter] || letter;
+  return letter;
+}
+
+// ---- Render all grids ----
+const groups = {
+  hebrew:  ['hebrew','hebrew_gadol','hebrew_katan'],
+  greek:   ['greek'],
+  latin:   ['latin_ordinal','latin'],
+  english: ['english','english_reduction','english_reverse'],
+  finnish: ['finnish','finnish_reduction']
+};
+
+for (const [lang, systems] of Object.entries(groups)) {
+  const grid = document.getElementById(lang + '-grid');
+  if (grid) grid.innerHTML = systems.map(buildSystemCard).join('');
+}
+
+// ---- Calculator ----
+const calcSel = document.getElementById('ref-calc-system');
+engine.getAllSystems().forEach(s => {
+  const opt = document.createElement('option');
+  opt.value = s.key;
+  opt.textContent = s.name;
+  calcSel.appendChild(opt);
+});
+
+function runCalc() {
+  const text = (document.getElementById('ref-calc-input').value || '').trim();
+  const system = calcSel.value;
+  const resultDiv = document.getElementById('calc-result');
+
+  if (!text) { resultDiv.style.display = 'none'; return; }
+
+  try {
+    const value = engine.calculate(text, system);
+    const bd = engine.breakdown(text, system);
+    const root = engine.digitalRoot(value);
+
+    resultDiv.style.display = 'block';
+    document.getElementById('calc-big-val').textContent = value;
+
+    const bdFiltered = bd.filter(b => b.value > 0);
+    document.getElementById('calc-breakdown').innerHTML =
+      bdFiltered.length <= 30
+        ? bdFiltered.map(b => `${b.letter}<span style="color:rgba(255,200,100,0.9);font-size:0.7rem">=${b.value}</span>`).join(' + ')
+        : `${bd.length} letters`;
+
+    document.getElementById('calc-root').textContent =
+      root !== value ? `Digital root: ${root}` : '';
+  } catch(e) {
+    resultDiv.style.display = 'none';
+  }
+}
+
+document.getElementById('ref-calc-input').addEventListener('input', runCalc);
+calcSel.addEventListener('change', runCalc);
+
+// ---- Notes table ----
+const notesBody = document.getElementById('notes-tbody');
+for (const [key, table] of Object.entries(engine.tables)) {
+  const entries = Object.entries(table.map);
+  const values = entries.map(([,v]) => v).filter(v => v > 0);
+  const min = Math.min(...values);
+  const max = Math.max(...values);
+  const lang = key.split('_')[0];
+  const notes = getNotes(key);
+  notesBody.innerHTML += `
+    <tr>
+      <td><code>${key}</code></td>
+      <td>${lang.charAt(0).toUpperCase()+lang.slice(1)}</td>
+      <td>${table.name}</td>
+      <td>${entries.length}</td>
+      <td>${min} – ${max}</td>
+      <td>${notes}</td>
+    </tr>`;
+}
+
+function getNotes(key) {
+  const n = {
+    hebrew: 'Standard rabbinic system. א=1 … ת=400. Final forms = same value as base.',
+    hebrew_gadol: 'Like Hechrachi but final forms continue: ך=500 … ץ=900.',
+    hebrew_katan: 'Each letter reduced to 1–9 by collapsing place values.',
+    greek: 'Classical isopsephy. Gaps at 6, 90, 900 due to archaic letters.',
+    latin_ordinal: 'A=1 through Z=26. Practical for ELS/Western gematria.',
+    latin: 'Only Roman numeral letters have values. I=J=1, U=V=5, X=10, L=50, C=100, D=500, M=1000.',
+    english: 'A=1 … Z=26. Most widely used English system.',
+    english_reduction: 'Values wrap at 9: A–I = 1–9, J–R = 1–9, S–Z = 1–8.',
+    english_reverse: 'Inverted: Z=1, Y=2 … A=26.',
+    finnish: 'Like English Standard but Å=27, Ä=28, Ö=29.',
+    finnish_reduction: 'Like English Reduction applied to full 29-letter Finnish alphabet.'
+  };
+  return n[key] || '—';
+}
+</script>
+</body>
+</html>

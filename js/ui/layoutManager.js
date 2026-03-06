@@ -14,6 +14,13 @@ class LayoutManager {
     document.getElementById('app').innerHTML = this.buildMainLayout();
     this.attachEventListeners();
     this.populateBookSelector(this.selectedLanguages.primary);
+    // Initialize gematria manager and inject its HTML
+    window.gematriaManager = new GematriaManager();
+    const panelSlot = document.getElementById('gematria-panel-placeholder');
+    if (panelSlot) panelSlot.innerHTML = window.gematriaManager.buildGematriaPanel();
+    const resultsSlot = document.getElementById('gematria-results-placeholder');
+    if (resultsSlot) resultsSlot.innerHTML = window.gematriaManager.buildGematriaResultsSection();
+    window.gematriaManager.attachEvents();
   }
 
   buildMainLayout() {
@@ -53,7 +60,7 @@ class LayoutManager {
       <!-- Footer -->
       <footer id="main-footer">
         <div class="footer-content">
-          <span>Bible Code Explorer | Educational & Research Tool</span>
+          <span>Bible Code Explorer | Educational & Research Tool | <a href="gematria_reference.html" style="color: rgba(255,255,255,0.7); text-decoration: none;" target="_blank">Gematria Reference</a></span>
           <span>Status: <span id="status-indicator">Ready</span></span>
         </div>
       </footer>
@@ -139,6 +146,9 @@ class LayoutManager {
           </label>
         </div>
       </div>
+
+      <!-- Gematria Panel (injected by GematriaManager) -->
+      <div id="gematria-panel-placeholder"></div>
     `;
   }
 
@@ -218,6 +228,9 @@ class LayoutManager {
           <button id="export-csv-btn" class="secondary-btn" disabled>💾 CSV</button>
           <button id="export-json-btn" class="secondary-btn" disabled>💾 JSON</button>
         </div>
+
+        <!-- Gematria Results (injected by GematriaManager) -->
+        <div id="gematria-results-placeholder"></div>
       </div>
     `;
   }

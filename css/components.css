@@ -406,3 +406,245 @@
     justify-content: space-between;
   }
 }
+
+/* ============================================================
+   GEMATRIA COMPONENTS
+   ============================================================ */
+
+/* Section header */
+#gematria-section h3 {
+  margin-bottom: 1rem;
+  color: var(--primary-color);
+  font-size: 1.1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--bg-color);
+}
+
+/* Live value display box */
+.gematria-value-display {
+  margin-top: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: linear-gradient(135deg, var(--primary-color), #3d5a73);
+  color: white;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.gematria-value-number {
+  display: block;
+  font-size: 2.2rem;
+  font-weight: 700;
+  font-family: 'Courier New', monospace;
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+
+.gematria-value-number:hover {
+  transform: scale(1.1);
+}
+
+.gematria-value-number::after {
+  content: " →";
+  font-size: 0.9rem;
+  opacity: 0.6;
+}
+
+.gematria-value-label {
+  display: block;
+  font-size: 0.75rem;
+  opacity: 0.75;
+  margin-bottom: 0.5rem;
+}
+
+/* Letter breakdown chips */
+.gematria-breakdown {
+  font-size: 0.8rem;
+  margin-top: 0.5rem;
+  opacity: 0.9;
+  line-height: 1.8;
+  word-break: break-all;
+}
+
+.gem-letter-chip {
+  display: inline-block;
+  background: rgba(255,255,255,0.15);
+  border-radius: 3px;
+  padding: 1px 4px;
+  margin: 1px;
+  font-family: 'Courier New', monospace;
+}
+
+.gematria-digital-root {
+  font-size: 0.78rem;
+  opacity: 0.7;
+  margin-top: 0.4rem;
+}
+
+/* Search row */
+.gematria-search-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: stretch;
+}
+
+.gematria-search-row input {
+  flex: 1;
+  padding: 0.6rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-size: 0.95rem;
+}
+
+.gematria-search-btn {
+  width: auto !important;
+  padding: 0.6rem 1rem !important;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Radio labels */
+.gematria-mode-row {
+  display: flex;
+  gap: 1rem;
+}
+
+.radio-label {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  cursor: pointer;
+  font-weight: normal;
+  font-size: 0.9rem;
+}
+
+/* ---- Results ---- */
+.gematria-results-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-top: 2px solid var(--border-color);
+  margin-top: 1rem;
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+.result-count-badge {
+  background: var(--secondary-color);
+  color: white;
+  font-size: 0.8rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+}
+
+.gematria-results-list {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.gematria-result-item {
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 0.75rem;
+  margin-bottom: 0.75rem;
+  background: white;
+  transition: box-shadow 0.2s;
+}
+
+.gematria-result-item:hover {
+  box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+}
+
+.gematria-result-word {
+  font-size: 1.1rem;
+  font-weight: bold;
+  font-family: 'Courier New', monospace;
+  color: var(--primary-color);
+  margin-bottom: 0.3rem;
+}
+
+.gematria-result-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.gematria-badge {
+  background: var(--accent-color);
+  color: white;
+  font-weight: bold;
+  font-size: 0.85rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+}
+
+.gematria-verse-ref {
+  font-size: 0.82rem;
+  color: var(--secondary-color);
+  font-weight: 500;
+}
+
+.gematria-pos {
+  font-size: 0.78rem;
+  color: #999;
+}
+
+.gematria-verse-preview {
+  font-size: 0.82rem;
+  color: #666;
+  line-height: 1.5;
+  border-left: 3px solid var(--bg-color);
+  padding-left: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+mark.gematria-word-highlight {
+  background: var(--highlight-color);
+  color: var(--primary-color);
+  padding: 0 2px;
+  border-radius: 2px;
+}
+
+/* Multi-language comparison chips */
+.gem-multilang {
+  margin-top: 0.4rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.gem-lang-chip {
+  background: var(--bg-color);
+  border: 1px solid var(--border-color);
+  border-radius: 3px;
+  font-size: 0.75rem;
+  padding: 0.1rem 0.4rem;
+  font-family: 'Courier New', monospace;
+  cursor: default;
+}
+
+.gem-lang-chip:hover {
+  background: var(--secondary-color);
+  color: white;
+  border-color: var(--secondary-color);
+}
+
+/* Gematria view button */
+.gematria-view-btn {
+  margin-top: 0.4rem;
+  font-size: 0.82rem;
+  padding: 0.35rem 0.7rem;
+}
+
+/* All-systems comparison block */
+.gem-all-systems {
+  font-size: 0.85rem;
+  line-height: 2;
+}
+
+.gem-lang-group {
+  margin: 0.25rem 0;
+}
