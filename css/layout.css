@@ -130,6 +130,15 @@ details[open] summary {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  min-height: 0;
+}
+
+.display-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .view-tabs {
@@ -162,7 +171,8 @@ details[open] summary {
 .display-content {
   display: none;
   flex: 1;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
   padding: 2rem;
   min-height: 0;
 }

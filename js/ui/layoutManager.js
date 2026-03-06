@@ -13,6 +13,7 @@ class LayoutManager {
   initializeLayout() {
     document.getElementById('app').innerHTML = this.buildMainLayout();
     this.attachEventListeners();
+    this.populateBookSelector(this.selectedLanguages.primary);
   }
 
   buildMainLayout() {
@@ -68,13 +69,7 @@ class LayoutManager {
         <div class="control-group">
           <label>Text Range</label>
           <select id="book-selector">
-            <optgroup label="Old Testament">
-              <option value="gen" selected>Genesis</option>
-              <option value="exo">Exodus</option>
-            </optgroup>
-            <optgroup label="New Testament">
-              <option value="mat">Matthew</option>
-            </optgroup>
+            <option value="">Loading books...</option>
           </select>
           
           <div class="range-inputs">
@@ -227,11 +222,83 @@ class LayoutManager {
     `;
   }
 
+  async populateBookSelector(language) {
+    const selector = document.getElementById('book-selector');
+    if (!selector) return;
+
+    selector.innerHTML = '<option value="">Loading books...</option>';
+    selector.disabled = true;
+
+    try {
+      const books = await window.dataLoader.getAvailableBooks(language);
+
+      if (!books || books.length === 0) {
+        selector.innerHTML = '<option value="">No books available</option>';
+        return;
+      }
+
+      // Group by testament
+      const otBooks = books.filter(b => b.testament === 'OT');
+      const ntBooks = books.filter(b => b.testament === 'NT');
+
+      let html = '';
+
+      if (otBooks.length > 0) {
+        html += '<optgroup label="Old Testament">';
+        otBooks.forEach(book => {
+          html += `<option value="${book.id}">${book.name}</option>`;
+        });
+        html += '</optgroup>';
+      }
+
+      if (ntBooks.length > 0) {
+        html += '<optgroup label="New Testament">';
+        ntBooks.forEach(book => {
+          html += `<option value="${book.id}">${book.name}</option>`;
+        });
+        html += '</optgroup>';
+      }
+
+      selector.innerHTML = html;
+      selector.disabled = false;
+
+      // Update chapter range for the first book
+      this.updateChapterRange(books[0]);
+
+    } catch (error) {
+      console.error('Failed to populate book selector:', error);
+      selector.innerHTML = '<option value="">Error loading books</option>';
+    }
+  }
+
+  updateChapterRange(book) {
+    if (!book) return;
+    const chapterEnd = document.getElementById('chapter-end');
+    if (chapterEnd) {
+      chapterEnd.max = book.chapterCount;
+      chapterEnd.value = 1;
+    }
+    const chapterStart = document.getElementById('chapter-start');
+    if (chapterStart) {
+      chapterStart.max = book.chapterCount;
+      chapterStart.value = 1;
+    }
+  }
+
   attachEventListeners() {
     // Language selector
     document.getElementById('language-selector').addEventListener('change', (e) => {
       this.selectedLanguages.primary = e.target.value;
       this.updateNormalizedPreview();
+      this.populateBookSelector(e.target.value);
+    });
+
+    // Book selector - update chapter range when book changes
+    document.getElementById('book-selector').addEventListener('change', async (e) => {
+      const language = this.selectedLanguages.primary;
+      const books = await window.dataLoader.getAvailableBooks(language);
+      const selected = books.find(b => b.id === e.target.value);
+      if (selected) this.updateChapterRange(selected);
     });
 
     // Search term preview
@@ -265,7 +332,6 @@ class LayoutManager {
     // Reference language checkbox
     document.getElementById('show-reference-lang').addEventListener('change', (e) => {
       if (e.target.checked && this.currentResults) {
-        // Switch to dual view and render it
         this.switchView('dual');
         this.updateDualPane();
       }
@@ -299,12 +365,10 @@ class LayoutManager {
   }
 
   switchView(viewName) {
-    // Update tab buttons
     document.querySelectorAll('.tab-btn').forEach(btn => {
       btn.classList.toggle('active', btn.dataset.view === viewName);
     });
 
-    // Update display areas
     document.querySelectorAll('.display-content').forEach(content => {
       content.classList.remove('active');
     });
@@ -314,7 +378,6 @@ class LayoutManager {
   }
 
   async performSearch() {
-    // Gather parameters
     const params = {
       language: this.selectedLanguages.primary,
       book: document.getElementById('book-selector').value,
@@ -333,9 +396,13 @@ class LayoutManager {
       proximityThreshold: parseInt(document.getElementById('proximity-threshold').value) || 1000
     };
 
-    // Validate
     if (!params.searchTerm) {
       alert('Please enter a search term');
+      return;
+    }
+
+    if (!params.book) {
+      alert('Please select a book');
       return;
     }
 
@@ -344,34 +411,28 @@ class LayoutManager {
       return;
     }
 
-    // Show loading state
     this.setStatus('Searching...');
     document.getElementById('search-btn').disabled = true;
     document.getElementById('search-btn').innerHTML = '⏳ Searching...';
 
     try {
-      // Execute search
       const results = await window.searchManager.executeSearch(params);
       
       this.currentResults = results;
       this.currentText = results.text;
       
-      // Display results based on mode
       if (results.mode === 'cluster') {
         this.displayClusterResults(results.clusters);
       } else {
         this.displayResults(results.results);
       }
       
-      // Update text display
       window.displayManager.loadText(results.text, results.verseMap, params.language);
       
-      // If reference language is enabled, update dual pane
       if (document.getElementById('show-reference-lang').checked) {
         this.updateDualPane();
       }
       
-      // Enable export buttons
       document.getElementById('export-csv-btn').disabled = false;
       document.getElementById('export-json-btn').disabled = false;
       
@@ -425,7 +486,6 @@ class LayoutManager {
 
     resultsList.innerHTML = html;
 
-    // Attach view handlers
     resultsList.querySelectorAll('.view-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
         const index = parseInt(e.target.dataset.resultIndex);
@@ -476,7 +536,6 @@ class LayoutManager {
 
     resultsList.innerHTML = html;
 
-    // Attach view handlers
     resultsList.querySelectorAll('.view-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
         const index = parseInt(e.target.dataset.resultIndex);
@@ -533,19 +592,14 @@ class LayoutManager {
     const generator = new MatrixGenerator();
     const optimal = generator.findOptimalWidth(this.currentResults.results, 10, 150);
     document.getElementById('matrix-width').value = optimal.width;
-    
-    // Regenerate matrix with optimal width
     this.updateMatrixView();
-    
     alert(`Optimal width found: ${optimal.width} (compactness: ${optimal.compactness})`);
   }
 
   updateMatrixView() {
     if (!this.currentResults) return;
-    
     const width = parseInt(document.getElementById('matrix-width').value) || 50;
     const results = this.currentResults.results || [];
-    
     window.displayManager.renderMatrix(this.currentText, width, results);
   }
 
