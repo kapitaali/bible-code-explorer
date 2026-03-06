@@ -648,3 +648,286 @@ mark.gematria-word-highlight {
 .gem-lang-group {
   margin: 0.25rem 0;
 }
+
+/* ============================================================
+   HELP BUTTON (header)
+   ============================================================ */
+
+.help-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.45rem 1rem;
+  background: rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.9);
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 5px;
+  text-decoration: none;
+  font-size: 0.88rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+  white-space: nowrap;
+  margin-left: 0.6rem;
+}
+
+.help-btn:hover {
+  background: rgba(255,255,255,0.25);
+  color: white;
+  border-color: rgba(255,255,255,0.6);
+}
+
+/* ============================================================
+   DUAL-PANE SIDE-BY-SIDE VIEW
+   ============================================================ */
+
+.dual-pane-wrapper {
+  display: flex;
+  gap: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+.dual-pane {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  border-right: 1px solid var(--border-color);
+}
+
+.dual-pane:last-child {
+  border-right: none;
+}
+
+.dual-pane-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  background: var(--bg-color);
+  border-bottom: 2px solid var(--border-color);
+  flex-shrink: 0;
+}
+
+.pane-lang-label {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--primary-color);
+}
+
+.pane-hint {
+  font-size: 0.75rem;
+  color: #999;
+  font-style: italic;
+}
+
+.dual-pane-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0.75rem 1rem;
+  line-height: 1.9;
+}
+
+/* Verse blocks */
+.verse-group {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  margin-bottom: 0.15rem;
+  transition: background 0.15s, opacity 0.15s;
+}
+
+.verse-group[dir="rtl"] {
+  flex-direction: row-reverse;
+  text-align: right;
+}
+
+.verse-num {
+  flex-shrink: 0;
+  font-size: 0.72rem;
+  color: #aaa;
+  font-family: 'Courier New', monospace;
+  min-width: 1.8rem;
+  text-align: right;
+  user-select: none;
+}
+
+.verse-text {
+  flex: 1;
+  font-size: 0.95rem;
+}
+
+.verse-missing {
+  color: #ccc;
+  font-style: italic;
+}
+
+/* Verse hover states — verse-level (safe, never word-misaligned) */
+.verse-group.verse-highlighted {
+  background: rgba(52, 152, 219, 0.12);
+  border-left: 3px solid var(--secondary-color);
+  padding-left: 0.6rem;
+}
+
+.verse-group.verse-highlighted .verse-num {
+  color: var(--secondary-color);
+  font-weight: 700;
+}
+
+.verse-group.verse-dimmed {
+  opacity: 0.35;
+}
+
+/* Individual word spans */
+.word {
+  cursor: default;
+  border-radius: 3px;
+  padding: 1px 2px;
+  transition: background 0.1s;
+  display: inline;
+}
+
+.word:hover {
+  background: rgba(52, 152, 219, 0.18);
+}
+
+.word-space {
+  display: inline;
+}
+
+/* ============================================================
+   GEMATRIA HOVER TOOLTIP
+   ============================================================ */
+
+.gem-hover-tooltip {
+  position: absolute;
+  z-index: 9999;
+  background: #1a2332;
+  color: #e8edf2;
+  border: 1px solid rgba(52,152,219,0.5);
+  border-radius: 8px;
+  padding: 0.6rem 0.85rem 0.55rem;
+  min-width: 160px;
+  max-width: 280px;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.35);
+  font-size: 0.82rem;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(-100%) translateY(-10px);
+  transition: opacity 0.12s ease;
+  line-height: 1.4;
+}
+
+.gem-hover-tooltip.gem-tooltip-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* The word being hovered */
+.gem-tip-word {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 0.3rem;
+  letter-spacing: 0.02em;
+}
+
+/* Primary value line */
+.gem-tip-main {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin-bottom: 0.3rem;
+}
+
+.gem-tip-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  font-family: 'Courier New', monospace;
+  color: #f0c040;
+  line-height: 1;
+}
+
+.gem-tip-system {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.55);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.gem-tip-root {
+  font-size: 0.72rem;
+  color: rgba(255,200,80,0.65);
+  margin-left: auto;
+}
+
+/* Letter breakdown row */
+.gem-tip-breakdown {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.65);
+  margin-bottom: 0.3rem;
+  line-height: 1.7;
+  font-family: 'Courier New', monospace;
+  word-break: break-all;
+}
+
+.gem-tip-chip {
+  display: inline-block;
+  background: rgba(255,255,255,0.08);
+  border-radius: 2px;
+  padding: 0 3px;
+  margin: 1px;
+}
+
+.gem-tip-chip sub {
+  font-size: 0.65rem;
+  color: #f0c040;
+  vertical-align: sub;
+}
+
+.gem-tip-more {
+  color: rgba(255,255,255,0.35);
+}
+
+/* Secondary systems */
+.gem-tip-secondary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  margin-bottom: 0.25rem;
+  padding-top: 0.25rem;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+.gem-tip-sec-chip {
+  background: rgba(52,152,219,0.2);
+  border: 1px solid rgba(52,152,219,0.35);
+  border-radius: 3px;
+  font-size: 0.72rem;
+  padding: 0.1rem 0.4rem;
+  color: rgba(255,255,255,0.8);
+  white-space: nowrap;
+}
+
+.gem-tip-sec-chip b {
+  color: #f0c040;
+}
+
+/* Verse reference */
+.gem-tip-verse {
+  font-size: 0.7rem;
+  color: rgba(255,255,255,0.35);
+  text-align: right;
+  margin-top: 0.2rem;
+  padding-top: 0.2rem;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+
+/* RTL word support inside tooltip */
+.gem-tip-word[dir="rtl"] {
+  direction: rtl;
+  font-size: 1.2rem;
+}

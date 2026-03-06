@@ -32,10 +32,17 @@ class LayoutManager {
         </div>
         <div class="header-right">
           <select id="language-selector" class="language-dropdown">
-            <option value="latin">Latin (Vulgate)</option>
-            <option value="kjv">King James English</option>
-            <option value="finnish">Finnish</option>
+            <optgroup label="Source Languages">
+              <option value="hebrew">Hebrew (Masoretic OT)</option>
+              <option value="greek">Greek (NT)</option>
+            </optgroup>
+            <optgroup label="Translations">
+              <option value="latin">Latin (Vulgate)</option>
+              <option value="kjv">King James English</option>
+              <option value="finnish">Finnish</option>
+            </optgroup>
           </select>
+          <a href="help.html" target="_blank" class="help-btn" title="Help & Documentation">? Help</a>
         </div>
       </header>
 
@@ -60,7 +67,7 @@ class LayoutManager {
       <!-- Footer -->
       <footer id="main-footer">
         <div class="footer-content">
-          <span>Bible Code Explorer | Educational & Research Tool | <a href="gematria_reference.html" style="color: rgba(255,255,255,0.7); text-decoration: none;" target="_blank">Gematria Reference</a></span>
+          <span>Bible Code Explorer | Educational & Research Tool | <a href="gematria_reference.html" style="color: rgba(255,255,255,0.7); text-decoration: none;" target="_blank">Gematria Reference</a> | <a href="help.html" style="color: rgba(255,255,255,0.7); text-decoration: none;" target="_blank">Help</a></span>
           <span>Status: <span id="status-indicator">Ready</span></span>
         </div>
       </footer>
@@ -140,9 +147,9 @@ class LayoutManager {
 
         <!-- Side-by-Side Toggle -->
         <div class="control-group">
-          <label class="checkbox-label">
+          <label class="checkbox-label" id="reference-lang-toggle">
             <input type="checkbox" id="show-reference-lang">
-            Show reference language (Hebrew/Greek)
+            <span id="reference-lang-label">Show reference language (Hebrew/Greek)</span>
           </label>
         </div>
       </div>
@@ -304,6 +311,7 @@ class LayoutManager {
       this.selectedLanguages.primary = e.target.value;
       this.updateNormalizedPreview();
       this.populateBookSelector(e.target.value);
+      this._updateReferenceLangToggle(e.target.value);
     });
 
     // Book selector - update chapter range when book changes
@@ -633,6 +641,24 @@ class LayoutManager {
       );
     } catch (error) {
       console.error('Error updating dual pane:', error);
+    }
+  }
+
+  _updateReferenceLangToggle(lang) {
+    const toggle = document.getElementById('reference-lang-toggle');
+    const label = document.getElementById('reference-lang-label');
+    if (!toggle || !label) return;
+
+    if (lang === 'hebrew' || lang === 'greek') {
+      // Hebrew/Greek are source languages — no reference pane makes sense
+      toggle.style.display = 'none';
+      document.getElementById('show-reference-lang').checked = false;
+    } else {
+      toggle.style.display = '';
+      const refName = lang === 'latin' || lang === 'kjv' || lang === 'finnish'
+        ? 'Show source language (Hebrew OT / Greek NT)'
+        : 'Show reference language (Hebrew/Greek)';
+      label.textContent = refName;
     }
   }
 

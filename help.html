@@ -1,0 +1,1990 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Help & Documentation — Bible Code Explorer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@400;600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink:       #1a1f2e;
+      --ink-light: #3d4560;
+      --gold:      #c8a84b;
+      --gold-pale: #f5edd6;
+      --blue:      #2d5fa8;
+      --blue-light:#e8f0fb;
+      --red:       #9b2335;
+      --bg:        #f7f5f0;
+      --bg-warm:   #eeebe3;
+      --white:     #ffffff;
+      --border:    #d4cfc4;
+      --sidebar-w: 280px;
+      --header-h:  64px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.7;
+    }
+
+    /* =============================================
+       HEADER
+       ============================================= */
+    #doc-header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: var(--header-h);
+      background: var(--ink);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem;
+      z-index: 100;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+    }
+
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .header-brand .logo {
+      font-size: 1.4rem;
+    }
+
+    .header-brand h1 {
+      font-family: 'Crimson Pro', serif;
+      font-size: 1.35rem;
+      font-weight: 400;
+      color: var(--white);
+      letter-spacing: 0.02em;
+    }
+
+    .header-brand span {
+      color: var(--gold);
+      font-style: italic;
+    }
+
+    .header-nav {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .header-nav a {
+      color: rgba(255,255,255,0.65);
+      text-decoration: none;
+      font-size: 0.85rem;
+      padding: 0.4rem 0.9rem;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+
+    .header-nav a:hover {
+      background: rgba(255,255,255,0.1);
+      color: white;
+      border-color: rgba(255,255,255,0.4);
+    }
+
+    /* =============================================
+       LAYOUT
+       ============================================= */
+    #layout {
+      display: grid;
+      grid-template-columns: var(--sidebar-w) 1fr;
+      margin-top: var(--header-h);
+      min-height: calc(100vh - var(--header-h));
+    }
+
+    /* =============================================
+       SIDEBAR
+       ============================================= */
+    #sidebar {
+      position: sticky;
+      top: var(--header-h);
+      height: calc(100vh - var(--header-h));
+      overflow-y: auto;
+      background: var(--ink);
+      color: rgba(255,255,255,0.8);
+      padding: 1.5rem 0;
+      border-right: 1px solid rgba(255,255,255,0.07);
+    }
+
+    #sidebar::-webkit-scrollbar { width: 4px; }
+    #sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 2px; }
+
+    .sidebar-section-label {
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold);
+      padding: 1.2rem 1.5rem 0.4rem;
+      opacity: 0.9;
+    }
+
+    .sidebar-section-label:first-child { padding-top: 0.4rem; }
+
+    #sidebar a {
+      display: block;
+      padding: 0.38rem 1.5rem 0.38rem 1.8rem;
+      color: rgba(255,255,255,0.65);
+      text-decoration: none;
+      font-size: 0.84rem;
+      border-left: 2px solid transparent;
+      transition: all 0.15s;
+      line-height: 1.4;
+    }
+
+    #sidebar a:hover {
+      color: white;
+      background: rgba(255,255,255,0.06);
+      border-left-color: var(--gold);
+    }
+
+    #sidebar a.active {
+      color: white;
+      background: rgba(200, 168, 75, 0.12);
+      border-left-color: var(--gold);
+    }
+
+    #sidebar a.sub {
+      padding-left: 2.5rem;
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.45);
+    }
+
+    #sidebar a.sub:hover, #sidebar a.sub.active {
+      color: rgba(255,255,255,0.85);
+    }
+
+    /* =============================================
+       MAIN CONTENT
+       ============================================= */
+    #content {
+      max-width: 820px;
+      padding: 3rem 3.5rem 6rem;
+    }
+
+    /* Section anchors */
+    .doc-section {
+      margin-bottom: 4rem;
+      padding-top: 0.5rem;
+    }
+
+    /* ---- Chapter marker ---- */
+    .chapter-eyebrow {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.5rem;
+    }
+
+    /* ---- Headings ---- */
+    h2.doc-h2 {
+      font-family: 'Crimson Pro', serif;
+      font-size: 2.2rem;
+      font-weight: 600;
+      color: var(--ink);
+      line-height: 1.2;
+      margin-bottom: 1.2rem;
+      padding-bottom: 0.8rem;
+      border-bottom: 2px solid var(--border);
+    }
+
+    h3.doc-h3 {
+      font-family: 'Crimson Pro', serif;
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: var(--ink);
+      margin-top: 2.2rem;
+      margin-bottom: 0.7rem;
+    }
+
+    h4.doc-h4 {
+      font-size: 0.92rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--blue);
+      margin-top: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    /* ---- Body text ---- */
+    .doc-section p {
+      font-size: 0.97rem;
+      color: var(--ink-light);
+      margin-bottom: 1rem;
+    }
+
+    .doc-section p:last-child { margin-bottom: 0; }
+
+    /* ---- Lead paragraph ---- */
+    .lead {
+      font-family: 'Crimson Pro', serif;
+      font-size: 1.18rem;
+      font-weight: 300;
+      color: var(--ink);
+      line-height: 1.75;
+      margin-bottom: 1.4rem !important;
+    }
+
+    /* ---- Pull quote / callout ---- */
+    .callout {
+      border-left: 4px solid var(--gold);
+      background: var(--gold-pale);
+      padding: 1rem 1.4rem;
+      border-radius: 0 6px 6px 0;
+      margin: 1.5rem 0;
+    }
+
+    .callout p {
+      font-family: 'Crimson Pro', serif;
+      font-size: 1.05rem;
+      font-style: italic;
+      color: var(--ink);
+      margin: 0 !important;
+    }
+
+    .callout.warning {
+      border-left-color: var(--red);
+      background: #fdf1f2;
+    }
+
+    .callout.warning p { font-style: normal; font-size: 0.92rem; color: var(--red); }
+    .callout.warning strong { color: var(--red); }
+
+    .callout.info {
+      border-left-color: var(--blue);
+      background: var(--blue-light);
+    }
+    .callout.info p { font-style: normal; font-size: 0.92rem; color: var(--blue); }
+
+    /* ---- Step list ---- */
+    ol.steps {
+      counter-reset: steps;
+      list-style: none;
+      margin: 1.2rem 0;
+    }
+
+    ol.steps li {
+      counter-increment: steps;
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      font-size: 0.95rem;
+      color: var(--ink-light);
+    }
+
+    ol.steps li::before {
+      content: counter(steps);
+      flex-shrink: 0;
+      width: 28px;
+      height: 28px;
+      background: var(--ink);
+      color: var(--gold);
+      border-radius: 50%;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 0.1rem;
+    }
+
+    /* ---- Bullet list ---- */
+    ul.doc-list {
+      list-style: none;
+      margin: 1rem 0;
+    }
+
+    ul.doc-list li {
+      padding: 0.3rem 0 0.3rem 1.5rem;
+      position: relative;
+      font-size: 0.95rem;
+      color: var(--ink-light);
+    }
+
+    ul.doc-list li::before {
+      content: '›';
+      position: absolute;
+      left: 0;
+      color: var(--gold);
+      font-size: 1.1rem;
+      font-weight: bold;
+      line-height: 1.5;
+    }
+
+    /* ---- Definition list ---- */
+    dl.doc-dl { margin: 1rem 0; }
+    dl.doc-dl dt {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--ink);
+      background: var(--bg-warm);
+      display: inline-block;
+      padding: 0.15rem 0.5rem;
+      border-radius: 3px;
+      margin-bottom: 0.25rem;
+    }
+    dl.doc-dl dd {
+      margin-left: 1rem;
+      margin-bottom: 1rem;
+      font-size: 0.92rem;
+      color: var(--ink-light);
+    }
+
+    /* ---- Inline code ---- */
+    code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.83em;
+      background: var(--bg-warm);
+      padding: 0.1em 0.4em;
+      border-radius: 3px;
+      color: var(--red);
+    }
+
+    /* ---- Table ---- */
+    .doc-table-wrap { overflow-x: auto; margin: 1.5rem 0; }
+    table.doc-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+    table.doc-table th {
+      background: var(--ink);
+      color: var(--gold);
+      font-family: 'Outfit', sans-serif;
+      font-weight: 500;
+      font-size: 0.78rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 0.6rem 1rem;
+      text-align: left;
+    }
+    table.doc-table td {
+      padding: 0.55rem 1rem;
+      border-bottom: 1px solid var(--border);
+      color: var(--ink-light);
+      vertical-align: top;
+    }
+    table.doc-table tr:nth-child(even) td { background: var(--bg-warm); }
+    table.doc-table td:first-child {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      color: var(--ink);
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    /* ---- UI element label ---- */
+    .ui-label {
+      display: inline-block;
+      background: var(--ink);
+      color: white;
+      font-size: 0.75rem;
+      font-weight: 500;
+      padding: 0.15rem 0.55rem;
+      border-radius: 3px;
+      letter-spacing: 0.03em;
+      vertical-align: middle;
+    }
+
+    .ui-label.gold { background: var(--gold); color: var(--ink); }
+    .ui-label.blue { background: var(--blue); }
+    .ui-label.red  { background: var(--red); }
+
+    /* ---- Divider ---- */
+    .doc-divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 3rem 0;
+    }
+
+    /* ---- Gematria value example chips ---- */
+    .gem-example {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: var(--gold-pale);
+      border: 1px solid var(--gold);
+      border-radius: 6px;
+      padding: 0.3rem 0.7rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      color: var(--ink);
+      margin: 0.2rem 0;
+    }
+    .gem-example .val {
+      background: var(--gold);
+      color: var(--ink);
+      font-weight: 700;
+      padding: 0.05rem 0.4rem;
+      border-radius: 3px;
+    }
+
+    /* ---- TOC progress line ---- */
+    #reading-progress {
+      position: fixed;
+      top: var(--header-h);
+      left: 0;
+      width: 0%;
+      height: 3px;
+      background: var(--gold);
+      z-index: 200;
+      transition: width 0.1s;
+    }
+
+    /* ---- Back to top ---- */
+    #back-to-top {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: var(--ink);
+      color: var(--gold);
+      border: 1px solid var(--gold);
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.3s;
+      z-index: 50;
+      text-decoration: none;
+    }
+    #back-to-top.visible { opacity: 1; }
+    #back-to-top:hover { background: var(--gold); color: var(--ink); }
+
+    /* ---- Responsive ---- */
+    @media (max-width: 900px) {
+      #layout { grid-template-columns: 1fr; }
+      #sidebar { display: none; }
+      #content { padding: 2rem 1.5rem 4rem; max-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="reading-progress"></div>
+
+<!-- HEADER -->
+<header id="doc-header">
+  <div class="header-brand">
+    <span class="logo">📖</span>
+    <h1>Bible Code Explorer &mdash; <span>Help &amp; Documentation</span></h1>
+  </div>
+  <nav class="header-nav">
+    <a href="gematria_reference.html">Gematria Reference</a>
+    <a href="index.html">← Back to App</a>
+  </nav>
+</header>
+
+<!-- LAYOUT -->
+<div id="layout">
+
+  <!-- SIDEBAR -->
+  <nav id="sidebar">
+
+    <div class="sidebar-section-label">Introduction</div>
+    <a href="#what-is-bible-code">What Is the Bible Code?</a>
+    <a href="#history" class="sub">Historical Background</a>
+    <a href="#how-els-works" class="sub">How ELS Works</a>
+    <a href="#scientific-status" class="sub">Scientific Status</a>
+
+    <div class="sidebar-section-label">ELS Research</div>
+    <a href="#research-els">Doing ELS Research</a>
+    <a href="#choosing-text" class="sub">Choosing Your Text</a>
+    <a href="#choosing-terms" class="sub">Choosing Search Terms</a>
+    <a href="#interpreting-results" class="sub">Interpreting Results</a>
+    <a href="#cluster-analysis" class="sub">Cluster Analysis</a>
+    <a href="#statistical-pitfalls" class="sub">Statistical Pitfalls</a>
+
+    <div class="sidebar-section-label">Using the Program</div>
+    <a href="#program-overview">Program Overview</a>
+    <a href="#language-selection" class="sub">Language Selection</a>
+    <a href="#text-range" class="sub">Text Range</a>
+    <a href="#search-parameters" class="sub">Search Parameters</a>
+    <a href="#text-view" class="sub">Text View</a>
+    <a href="#matrix-view" class="sub">Matrix View</a>
+    <a href="#sidebyside-view" class="sub">Side-by-Side View</a>
+    <a href="#results-panel" class="sub">Results Panel</a>
+    <a href="#export" class="sub">Exporting Results</a>
+    <a href="#advanced-options" class="sub">Advanced Options</a>
+
+    <div class="sidebar-section-label">Gematria</div>
+    <a href="#what-is-gematria">What Is Gematria?</a>
+    <a href="#gematria-traditions" class="sub">Traditions &amp; Systems</a>
+    <a href="#hebrew-gematria" class="sub">Hebrew Systems</a>
+    <a href="#greek-gematria" class="sub">Greek Isopsephy</a>
+    <a href="#latin-gematria" class="sub">Latin Systems</a>
+    <a href="#english-gematria" class="sub">English Systems</a>
+    <a href="#finnish-gematria" class="sub">Finnish System</a>
+
+    <div class="sidebar-section-label">Gematria Research</div>
+    <a href="#research-gematria">Doing Gematria Research</a>
+    <a href="#gematria-methodology" class="sub">Methodology</a>
+    <a href="#famous-examples" class="sub">Famous Examples</a>
+    <a href="#cross-language" class="sub">Cross-Language Work</a>
+
+    <div class="sidebar-section-label">Using Gematria in App</div>
+    <a href="#gematria-ui">The Gematria Panel</a>
+    <a href="#gematria-calculator" class="sub">Live Calculator</a>
+    <a href="#gematria-search" class="sub">Searching by Value</a>
+    <a href="#gematria-modes" class="sub">Word vs. Sequence Mode</a>
+    <a href="#gematria-multilang" class="sub">Multi-Language Compare</a>
+    <a href="#gematria-reference-page" class="sub">Reference Page</a>
+
+    <div class="sidebar-section-label">Kabbalah</div>
+    <a href="#kabbalah">What Is Kabbalah?</a>
+    <a href="#kabbalah-origins" class="sub">Origins &amp; History</a>
+    <a href="#kabbalah-sefirot" class="sub">Sefirot &amp; Hebrew Letters</a>
+    <a href="#kabbalah-pardes" class="sub">The Four Levels (PaRDeS)</a>
+    <a href="#kabbalah-notarikon" class="sub">Notarikon &amp; Temurah</a>
+    <a href="#kabbalah-els" class="sub">Kabbalah &amp; Bible Codes</a>
+    <a href="#kabbalah-western" class="sub">Western Kabbalah</a>
+
+    <div class="sidebar-section-label">Further Reading</div>
+    <a href="#links">Links &amp; Resources</a>
+    <a href="#links-academic" class="sub">Academic Papers</a>
+    <a href="#links-critical" class="sub">Critical Analysis</a>
+    <a href="#links-research" class="sub">Research Communities</a>
+    <a href="#links-gematria" class="sub">Gematria Resources</a>
+    <a href="#links-kabbalah" class="sub">Kabbalah Study</a>
+
+  </nav>
+
+  <!-- CONTENT -->
+  <main id="content">
+
+    <!-- ====================================================
+         SECTION 1 — WHAT IS THE BIBLE CODE
+         ==================================================== -->
+    <div class="doc-section" id="what-is-bible-code">
+      <div class="chapter-eyebrow">Chapter 1 — Introduction</div>
+      <h2 class="doc-h2">What Is the Bible Code?</h2>
+
+      <p class="lead">
+        The "Bible Code" refers to a family of methods for finding hidden words, names, or messages
+        within the text of scripture by reading letters at regular intervals — skipping every
+        <em>n</em>th character through a long stretch of text.
+      </p>
+
+      <p>
+        The most studied form is called <strong>Equidistant Letter Sequences</strong> (ELS).
+        A researcher picks a skip value — say, every 7th letter — and reads the resulting sequence
+        to see whether it spells a meaningful word. Because biblical texts are very long, a
+        surprising number of such words do appear, which some interpreters regard as intentional
+        encoding by a divine author.
+      </p>
+
+      <div class="callout warning">
+        <p><strong>Important disclaimer:</strong> Bible Code research is not scientifically validated.
+        The scientific consensus, established by rigorous statistical work from researchers including
+        Brendan McKay, Dror Bar-Natan, and Gil Kalai, is that ELS patterns in the Bible are no more
+        frequent than in any other text of similar length. This program exists for educational
+        exploration, not to endorse Bible Code claims.</p>
+      </div>
+
+      <div class="video-embed-wrapper">
+        <div class="video-embed-label">📺 Recommended viewing — Bible Code methodology explained</div>
+        <div class="video-embed-container">
+          <iframe
+            src="https://www.youtube.com/embed/ji4qvi-4MZo"
+            title="Bible Code Methodology"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen>
+          </iframe>
+        </div>
+      </div>
+
+      <h3 class="doc-h3" id="history">Historical Background</h3>
+      <p>
+        The roots of letter-skipping in Hebrew scripture reach back to the Kabbalah and medieval
+        rabbinical scholarship. Rabbi Bachya ben Asher (13th century) noted that every 42nd letter
+        in the Torah spells the divine name. The modern wave of interest was sparked by the
+        mathematician Eliyahu Rips and his colleagues, who in 1994 published a paper in the
+        journal <em>Statistical Science</em> claiming to find meaningful ELS patterns linking
+        the names of famous rabbis to their birth and death dates. This paper, and Michael Drosnin's
+        popular book <em>The Bible Code</em> (1997), brought the phenomenon to worldwide attention.
+      </p>
+      <p>
+        The Rips et al. paper triggered an intense scientific debate. Replication attempts by
+        independent teams consistently failed to reproduce the results under stricter controls,
+        and the original findings were attributed to flexibility in how the researchers defined
+        their search terms — a form of selection bias.
+      </p>
+
+      <h3 class="doc-h3" id="how-els-works">How ELS Works</h3>
+      <p>
+        The mechanics are straightforward. Given a continuous string of letters (all spaces and
+        punctuation removed), an ELS search picks a starting position <em>p</em> and a skip
+        value <em>k</em>, then reads the characters at positions
+        <em>p</em>, <em>p+k</em>, <em>p+2k</em>, … and so on until a word of the desired
+        length is formed. For a word of length <em>L</em>, there are roughly
+        <em>N × (2 × maxSkip)</em> possible starting position / skip combinations to check,
+        where <em>N</em> is the length of the text.
+      </p>
+      <p>
+        A negative skip value reads the sequence backwards — finding words spelled in reverse.
+        This is sometimes called a "reverse ELS."
+      </p>
+
+      <div class="callout">
+        <p>
+          Example: In a text …ABCDEFGHIJ…, skip=3 starting at position 0 gives A, D, G, J —
+          spelling ADGJ. Starting at position 1 gives B, E, H — spelling BEH, and so forth.
+          Every combination of starting position and skip value is checked.
+        </p>
+      </div>
+
+      <h3 class="doc-h3" id="scientific-status">Scientific Status</h3>
+      <p>
+        The scientific community has reached a clear consensus: ELS patterns in the Bible are
+        statistically inevitable in any long text and carry no evidential weight for hidden
+        authorship or prophetic encoding. Three key arguments explain why:
+      </p>
+      <ul class="doc-list">
+        <li><strong>Multiple testing:</strong> When you check millions of combinations of starting
+        positions, skip values, and search terms, you are virtually guaranteed to find some
+        matches simply by chance.</li>
+        <li><strong>Selection bias:</strong> Researchers tend to report hits and ignore the far
+        more numerous misses, giving a misleading impression of frequency.</li>
+        <li><strong>Control texts:</strong> When the same ELS methods are applied to
+        <em>Moby Dick</em>, <em>War and Peace</em>, or even random letter strings, equally
+        striking patterns emerge. This was demonstrated conclusively by McKay et al. (1999)
+        in <em>Statistical Science</em>.</li>
+      </ul>
+      <p>
+        None of this makes ELS exploration uninteresting — it is a fascinating window into
+        combinatorics, linguistics, and the history of scriptural interpretation. It should
+        simply be approached as a tool for discovery and reflection, not proof of anything.
+      </p>
+    </div>
+
+    <hr class="doc-divider">
+
+    <!-- ====================================================
+         SECTION 2 — ELS RESEARCH
+         ==================================================== -->
+    <div class="doc-section" id="research-els">
+      <div class="chapter-eyebrow">Chapter 2 — ELS Research</div>
+      <h2 class="doc-h2">Doing ELS Research</h2>
+
+      <p class="lead">
+        Even setting aside questions of statistical significance, working through ELS searches
+        systematically can be a rewarding way to engage deeply with scriptural texts.
+        Here is a methodology that helps you get meaningful results and avoid common traps.
+      </p>
+
+      <h3 class="doc-h3" id="choosing-text">Choosing Your Text</h3>
+      <p>
+        The language and source text you choose significantly affects your results. Consider:
+      </p>
+      <ul class="doc-list">
+        <li><strong>Hebrew for the Old Testament</strong> is the traditional choice for Bible Code
+        research. The 22-letter Hebrew alphabet (no vowels in the normalized text) makes the
+        combinatorics different from alphabets with vowels.</li>
+        <li><strong>Greek for the New Testament</strong> — Koine Greek, as used in the Septuagint
+        and New Testament, is the appropriate source for Christian-oriented searches.</li>
+        <li><strong>Latin (Vulgate)</strong> is useful for studying how the Bible was interpreted
+        in Western Christianity for over a millennium.</li>
+        <li><strong>Finnish and English</strong> are included for comparative study and to
+        demonstrate that ELS patterns are not unique to Hebrew.</li>
+      </ul>
+      <p>
+        Limit your initial searches to a defined book and chapter range. Searching the entire
+        Bible at once with a broad skip range produces enormous numbers of results that are
+        difficult to evaluate.
+      </p>
+
+      <h3 class="doc-h3" id="choosing-terms">Choosing Search Terms</h3>
+      <p>
+        The choice of what to search for is the most important — and most subjective — decision
+        in ELS research. Best practices:
+      </p>
+      <ol class="steps">
+        <li>
+          <div><strong>Define your terms before searching.</strong> Write down the exact words
+          you intend to search for before you open the program. Changing your search term
+          after seeing results invalidates any conclusions you might draw.</div>
+        </li>
+        <li>
+          <div><strong>Use the normalized form.</strong> The program shows you the normalized
+          version of your search term (e.g. JUMALA for Finnish "jumala"). Make sure this
+          is what you intend to search.</div>
+        </li>
+        <li>
+          <div><strong>Keep terms short enough to be plausible but long enough to be meaningful.</strong>
+          A 2-letter term will appear thousands of times. A 10-letter term may appear zero times.
+          3–6 letters is usually the most productive range.</div>
+        </li>
+        <li>
+          <div><strong>Consider semantic context.</strong> The most compelling ELS finds are
+          those where a word appears in close proximity to the text that discusses that concept
+          — even though ELS skips ignore verse boundaries.</div>
+        </li>
+      </ol>
+
+      <h3 class="doc-h3" id="interpreting-results">Interpreting Results</h3>
+      <p>
+        When the search completes, you will see a list of results on the right panel. Each result
+        tells you the skip value, the starting position, and the exact letter sequence found.
+        Things to consider when evaluating results:
+      </p>
+
+      <div class="doc-table-wrap">
+        <table class="doc-table">
+          <thead>
+            <tr><th>What you see</th><th>What it means</th><th>Significance?</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Skip = 1</td>
+              <td>The word appears as a consecutive sequence in the plain text</td>
+              <td>Expected — not an ELS find</td>
+            </tr>
+            <tr>
+              <td>Skip = 2–10, many results</td>
+              <td>Short skip range, common word — statistically expected</td>
+              <td>Low</td>
+            </tr>
+            <tr>
+              <td>Skip = 20–50, rare word</td>
+              <td>Less common combination</td>
+              <td>Moderate interest only</td>
+            </tr>
+            <tr>
+              <td>Term appears near thematically related plain text</td>
+              <td>Proximity of ELS to surface meaning</td>
+              <td>Most interesting case for reflection</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 class="doc-h3" id="cluster-analysis">Cluster Analysis</h3>
+      <p>
+        The most famous Bible Code claims involve not just one word appearing at an ELS, but
+        several <em>related</em> words appearing in close proximity to each other in the
+        matrix view. This is called a cluster. The program's cluster search mode lets you
+        specify a primary search term plus a list of related terms, and it will find cases
+        where the primary term's ELS occurs within a set distance of the related terms' ELS.
+      </p>
+      <p>
+        The <strong>proximity threshold</strong> controls how far apart (in characters of
+        the continuous normalized text) the primary and related terms are allowed to be.
+        A lower threshold finds tighter clusters; a higher threshold finds looser ones.
+        Start with 500–1000 characters and adjust from there.
+      </p>
+
+      <h3 class="doc-h3" id="statistical-pitfalls">Statistical Pitfalls to Avoid</h3>
+      <ul class="doc-list">
+        <li><strong>Don't fish for results.</strong> Running 50 different searches and reporting the
+        3 that look interesting is the Texas Sharpshooter Fallacy.</li>
+        <li><strong>Compare against a control.</strong> Run the exact same search on a different
+        text of similar length (e.g. a Finnish novel). If you find equally striking results,
+        this suggests the pattern is due to chance.</li>
+        <li><strong>Note the total number of possible combinations.</strong> The larger your
+        skip range and the longer your text, the more combinations are being checked, and
+        the more matches you expect by pure chance.</li>
+        <li><strong>Be suspicious of post-hoc narrative.</strong> It is very easy to construct
+        a meaningful-sounding story around any set of words found in proximity.</li>
+      </ul>
+    </div>
+
+    <hr class="doc-divider">
+
+    <!-- ====================================================
+         SECTION 3 — USING THE PROGRAM
+         ==================================================== -->
+    <div class="doc-section" id="program-overview">
+      <div class="chapter-eyebrow">Chapter 3 — Using the Program</div>
+      <h2 class="doc-h2">Program Overview</h2>
+
+      <p class="lead">
+        The Bible Code Explorer is divided into three vertical columns: the
+        <strong>Control Panel</strong> on the left, the <strong>Display Area</strong>
+        in the centre, and the <strong>Results Panel</strong> on the right.
+      </p>
+      <p>
+        The general workflow is: select a language and text range → enter a search term →
+        run the search → browse results in the right panel → click any result to highlight
+        it in the centre display.
+      </p>
+
+      <h3 class="doc-h3" id="language-selection">Language Selection</h3>
+      <p>
+        The language dropdown in the top-right header controls which Bible translation is
+        searched. The available options are:
+      </p>
+      <ul class="doc-list">
+        <li><strong>Latin (Vulgate)</strong> — the 4th-century Latin translation by Jerome, the
+        standard Bible of Western Christianity for over 1,000 years.</li>
+        <li><strong>King James English</strong> — the 1611 English translation, one of the most
+        influential texts in the English language.</li>
+        <li><strong>Finnish</strong> — the Finnish Bible, using the 29-letter Finnish alphabet
+        including Å, Ä, and Ö as distinct letters.</li>
+      </ul>
+      <p>
+        When the Side-by-Side view is active, a second language panel appears automatically:
+        Hebrew for Old Testament books, Greek for New Testament books.
+      </p>
+
+      <h3 class="doc-h3" id="text-range">Text Range</h3>
+      <p>
+        The <span class="ui-label">Text Range</span> section in the control panel lets you
+        choose which book and chapter range to search. The book selector is populated
+        dynamically from the loaded Bible data, grouped into Old and New Testament sections.
+        The chapter fields update automatically when you change the book.
+      </p>
+      <p>
+        Searching a larger chapter range takes longer and produces more results.
+        For exploratory work, start with a single chapter; for comprehensive study,
+        expand to a full book.
+      </p>
+
+      <h3 class="doc-h3" id="search-parameters">Search Parameters</h3>
+
+      <h4 class="doc-h4">Search Term</h4>
+      <p>
+        Type the word you want to find. As you type, the <em>Normalized</em> preview shows
+        exactly what will be searched — spaces and punctuation are removed, the text is
+        uppercased, and language-specific rules are applied (e.g. Finnish Ä and Ö are
+        preserved; Latin diacritics are stripped).
+      </p>
+
+      <h4 class="doc-h4">Skip Interval Range</h4>
+      <p>
+        Sets the minimum and maximum skip values. Skip 1 finds the word in plain text
+        (not really ELS). Larger values find sparser patterns. The default range of
+        <code>1 to 50</code> is a good starting point. For longer texts, consider
+        extending to 100 or 200. Including backward searches doubles the search space
+        by also checking negative skip values.
+      </p>
+
+      <h4 class="doc-h4">Max Results</h4>
+      <p>
+        Limits how many results are returned to prevent the browser from becoming slow.
+        The default of 500 is usually sufficient. If you are searching a very common word
+        at a wide skip range, you may hit this limit — in that case, narrow your skip
+        range or increase the limit cautiously.
+      </p>
+
+      <h3 class="doc-h3" id="text-view">Text View</h3>
+      <p>
+        The Text View tab shows the continuous normalized text with verse numbers
+        preserved as superscripts. After clicking <span class="ui-label gold">View in Text</span>
+        on any result, the matching letters are highlighted in amber and the view
+        scrolls to bring the first letter into focus.
+      </p>
+      <p>
+        Individual letters are clickable — hovering over a letter shows its position
+        in the continuous text, which is useful for understanding the skip arithmetic.
+      </p>
+
+      <h3 class="doc-h3" id="matrix-view">Matrix View</h3>
+      <p>
+        The Matrix View wraps the continuous text into a 2D grid of a chosen width.
+        When an ELS result has a skip value of exactly <em>k</em>, and the matrix width
+        is also <em>k</em>, the matching letters fall in a perfect vertical column —
+        the classic "Bible Code" presentation.
+      </p>
+      <p>
+        Use <span class="ui-label blue">Auto-optimize</span> to let the program
+        calculate the matrix width that makes the current result set appear most compact
+        (letters closest together in the grid). You can also type a width manually.
+      </p>
+
+      <h3 class="doc-h3" id="sidebyside-view">Side-by-Side View</h3>
+      <p>
+        When <span class="ui-label">Show reference language</span> is ticked in the
+        control panel, the Side-by-Side tab shows the primary language alongside Hebrew
+        (for Old Testament) or Greek (for New Testament), aligned verse by verse.
+        Hovering over a word in one pane highlights the corresponding word(s) in the
+        other pane.
+      </p>
+      <p>
+        This view is particularly useful for comparing how a search term relates to
+        the underlying source language — for instance, seeing how a Finnish word
+        you searched aligns with the original Hebrew text of Genesis.
+      </p>
+
+      <h3 class="doc-h3" id="results-panel">Results Panel</h3>
+      <p>
+        Every search result is listed on the right with its term, skip value, starting
+        position in the continuous text, the exact letter sequence found, and a
+        <span class="ui-label gold">View in Text</span> button. Results can be sorted
+        by position or by skip value using the dropdown at the top of the panel.
+      </p>
+      <p>
+        The status bar at the bottom of the page always shows how many results were found.
+      </p>
+
+      <h3 class="doc-h3" id="export">Exporting Results</h3>
+      <p>
+        After a successful search, three export options are available:
+      </p>
+      <dl class="doc-dl">
+        <dt>CSV</dt>
+        <dd>A spreadsheet-compatible file with columns for term, skip, start position, end position, sequence, and letter positions. Open in Excel, LibreOffice, or any CSV viewer.</dd>
+        <dt>JSON</dt>
+        <dd>A complete structured data file including metadata, all search parameters, and all results. Useful for programmatic analysis or archiving.</dd>
+        <dt>HTML Matrix</dt>
+        <dd>A standalone HTML file showing the matrix view with highlighted cells. Can be shared or printed without needing the application.</dd>
+      </dl>
+
+      <h3 class="doc-h3" id="advanced-options">Advanced Options</h3>
+      <p>
+        Clicking <span class="ui-label">⚙️ Advanced Options</span> reveals:
+      </p>
+      <ul class="doc-list">
+        <li><strong>Max Results</strong> — cap on how many matches are returned.</li>
+        <li><strong>Cluster search mode</strong> — enables multi-term proximity searching.
+        Enter related terms separated by commas in the box that appears, and set a
+        proximity threshold in characters.</li>
+      </ul>
+    </div>
+
+    <hr class="doc-divider">
+
+    <!-- ====================================================
+         SECTION 4 — WHAT IS GEMATRIA
+         ==================================================== -->
+    <div class="doc-section" id="what-is-gematria">
+      <div class="chapter-eyebrow">Chapter 4 — Gematria</div>
+      <h2 class="doc-h2">What Is Gematria?</h2>
+
+      <p class="lead">
+        Gematria is the practice of assigning numeric values to letters, then using those values
+        to find hidden connections between words, phrases, or concepts that share the same total.
+        It is one of the oldest forms of numerological interpretation in religious and
+        philosophical traditions.
+      </p>
+
+      <p>
+        The core idea is simple: if two words calculate to the same number, they are considered
+        to share a deeper equivalence or connection. A scholar might note that the Hebrew word
+        for "peace" (שלום, <em>shalom</em>) has the same gematria value as a particular
+        divine name, and interpret this as a meaningful relationship encoded in the language itself.
+      </p>
+
+      <h3 class="doc-h3" id="gematria-traditions">Traditions and Systems</h3>
+      <p>
+        Virtually every ancient language tradition with an alphabetic script developed some
+        form of gematria. The practice appears in Hebrew Kabbalistic texts, Greek mystery
+        traditions, Latin medieval scholarship, and has found modern expressions in English
+        and other European languages. The systems differ significantly in their letter values,
+        but the interpretive method is consistent.
+      </p>
+
+      <h3 class="doc-h3" id="hebrew-gematria">Hebrew Systems</h3>
+      <p>
+        Hebrew gematria has the richest tradition and the most developed taxonomy of systems.
+        The program implements three:
+      </p>
+
+      <div class="doc-table-wrap">
+        <table class="doc-table">
+          <thead>
+            <tr><th>System</th><th>Hebrew name</th><th>How it works</th><th>Example: אמת (Truth)</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Mispar Hechrachi</td>
+              <td>מספר הכרחי</td>
+              <td>Absolute values: א=1…י=10, כ=20…ק=100, ר=200, ש=300, ת=400. Final forms equal base form.</td>
+              <td>א(1) + מ(40) + ת(400) = <strong>441</strong></td>
+            </tr>
+            <tr>
+              <td>Mispar Gadol</td>
+              <td>מספר גדול</td>
+              <td>Like Hechrachi but final letter forms continue the sequence: ך=500, ם=600, ן=700, ף=800, ץ=900.</td>
+              <td>Same as above unless final forms appear</td>
+            </tr>
+            <tr>
+              <td>Mispar Katan</td>
+              <td>מספר קטן</td>
+              <td>Reduced: each letter's place value is collapsed to a single digit. Yod(10)→1, Kaf(20)→2, etc.</td>
+              <td>א(1) + מ(4) + ת(4) = <strong>9</strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>
+        In Mispar Hechrachi, the Hebrew alphabet is divided into three groups of nine:
+        units (א–ט = 1–9), tens (י–צ = 10–90), and hundreds (ק–ת = 100–400).
+        This structure reflects the classical understanding of numbers in ancient Hebrew culture.
+      </p>
+
+      <h3 class="doc-h3" id="greek-gematria">Greek Isopsephy</h3>
+      <p>
+        The Greek equivalent of gematria is called <em>isopsephy</em> (ἰσόψηφος — equal pebbles,
+        a reference to counting with stones). The Greek alphabet originally had 27 letters,
+        including three archaic letters (digamma=6, koppa=90, sampi=900) that dropped from
+        everyday use but were retained for numeric purposes. This is why the Greek numeric
+        alphabet has gaps: there is no letter with value 6, 90, or 900 in modern usage.
+      </p>
+      <p>
+        The most famous example of Greek isopsephy in scripture is the Number of the Beast
+        in Revelation 13:18. The number 666 encodes a name; most modern scholars believe
+        this is Nero Caesar transliterated into Greek.
+      </p>
+
+      <div class="gem-example">ΝΕΡΩΝ ΚΑΙΣΑΡ <span class="val">= 666</span></div>
+
+      <h3 class="doc-h3" id="latin-gematria">Latin Systems</h3>
+      <p>
+        Latin gematria exists in two forms in this program:
+      </p>
+      <ul class="doc-list">
+        <li><strong>Literae Notae</strong> (Roman numeral letters): Only the letters I/J (=1),
+        V/U (=5), X (=10), L (=50), C (=100), D (=500), and M (=1000) have values. All
+        other letters are 0. This is the historically attested system used in medieval
+        Latin textual interpretation.</li>
+        <li><strong>Ordinal (A=1)</strong>: A simple sequential assignment A=1 through Z=26,
+        identical to the English standard system. This is more practical for computational
+        work and is the default for Latin in this program.</li>
+      </ul>
+
+      <h3 class="doc-h3" id="english-gematria">English Systems</h3>
+      <p>
+        English gematria is a modern development, primarily from the 19th and 20th centuries.
+        Three variants are provided:
+      </p>
+      <ul class="doc-list">
+        <li><strong>Standard (A=1…Z=26)</strong>: The most widely used. The word GOD = 7+15+4 = <strong>26</strong>.</li>
+        <li><strong>Reduction</strong>: Each letter maps to 1–9 by wrapping: A–I = 1–9, J–R = 1–9, S–Z = 1–8. Equivalent to summing the digits of the standard value.</li>
+        <li><strong>Reverse</strong>: Z=1, Y=2 … A=26. Used in some modern occult traditions as a "mirror" system.</li>
+      </ul>
+
+      <h3 class="doc-h3" id="finnish-gematria">Finnish System</h3>
+      <p>
+        Finnish gematria follows the same ordinal logic as English but accounts for the
+        three extra letters in the Finnish alphabet. The full order is A through Z (1–26),
+        then Å=27, Ä=28, Ö=29. This means a Finnish word containing Ä or Ö will naturally
+        have a higher gematria value than an equivalent English word of the same apparent structure.
+      </p>
+      <p>
+        A reduction variant is also provided, applying the same modulo-9 logic to all 29
+        letters of the Finnish alphabet.
+      </p>
+    </div>
+
+    <hr class="doc-divider">
+
+    <!-- ====================================================
+         SECTION 5 — GEMATRIA RESEARCH
+         ==================================================== -->
+    <div class="doc-section" id="research-gematria">
+      <div class="chapter-eyebrow">Chapter 5 — Gematria Research</div>
+      <h2 class="doc-h2">Doing Gematria Research</h2>
+
+      <p class="lead">
+        Gematria research involves calculating values, identifying equalities, and constructing
+        interpretive frameworks around them. Like ELS, it is more art than science —
+        but a disciplined methodology makes the results more interesting and defensible.
+      </p>
+
+      <h3 class="doc-h3" id="gematria-methodology">Methodology</h3>
+      <ol class="steps">
+        <li>
+          <div><strong>Choose a system appropriate to your text.</strong> Use Mispar Hechrachi
+          for Hebrew scripture, Isopsephy for Greek New Testament, Latin Ordinal for the Vulgate.
+          Mixing systems across languages is valid as a comparative exercise, but note clearly
+          which system you used.</div>
+        </li>
+        <li>
+          <div><strong>Establish your target value first.</strong> Decide what value you are
+          interested in before searching for matches. Starting from a word and looking for
+          other words that match it is more rigorous than starting from a match and working
+          backwards.</div>
+        </li>
+        <li>
+          <div><strong>Check the digital root.</strong> The digital root (repeatedly summing
+          digits until you reach a single digit) can reveal structural similarities between
+          numbers that look different at first. The program shows digital roots automatically.</div>
+        </li>
+        <li>
+          <div><strong>Document your calculations transparently.</strong> Always show the
+          per-letter breakdown so others can verify your arithmetic.</div>
+        </li>
+        <li>
+          <div><strong>Compare across systems.</strong> A particularly meaningful equivalence
+          might hold in one system but not another. Noting this strengthens or weakens the
+          interpretive claim.</div>
+        </li>
+      </ol>
+
+      <h3 class="doc-h3" id="famous-examples">Famous Historical Examples</h3>
+
+      <div class="callout">
+        <p>
+          The name of God in the Tetragrammaton יהוה (YHWH) = 10+5+6+5 = <strong>26</strong>
+          in Mispar Hechrachi. The English word GOD also equals 26 in Standard English gematria.
+          This is one of the most cited cross-language gematria equivalences, though its
+          significance is disputed since the systems were developed independently.
+        </p>
+      </div>
+
+      <div class="doc-table-wrap">
+        <table class="doc-table">
+          <thead>
+            <tr><th>Word / Phrase</th><th>Language</th><th>System</th><th>Value</th><th>Tradition</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>יהוה (YHWH)</td><td>Hebrew</td><td>Hechrachi</td><td>26</td><td>Tetragrammaton = 26</td></tr>
+            <tr><td>אחד (One)</td><td>Hebrew</td><td>Hechrachi</td><td>13</td><td>אהבה (Love) also = 13; unity and love equated</td></tr>
+            <tr><td>ΙΗΣΟΥΣ (Jesus)</td><td>Greek</td><td>Isopsephy</td><td>888</td><td>888 considered the "number of Jesus" in Christian numerology</td></tr>
+            <tr><td>ΝΕΡΩΝ ΚΑΙΣΑΡ</td><td>Greek</td><td>Isopsephy</td><td>666</td><td>Number of the Beast, Revelation 13:18</td></tr>
+            <tr><td>GOD</td><td>English</td><td>Standard</td><td>26</td><td>Same value as YHWH by coincidence or design</td></tr>
+            <tr><td>DEUS</td><td>Latin</td><td>Ordinal</td><td>45</td><td>Latin word for God</td></tr>
+            <tr><td>JUMALA</td><td>Finnish</td><td>Standard</td><td>59</td><td>Finnish word for God</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 class="doc-h3" id="cross-language">Cross-Language Comparative Work</h3>
+      <p>
+        One of the most interesting uses of this program is comparing how the same concept
+        appears across languages and systems. For example, searching for the value of
+        the Hebrew word for "light" (אור = 207 in Hechrachi) in a Greek text, using
+        Isopsephy, would find Greek words or phrases that happen to total 207. Whether
+        such equalities are meaningful is a matter of interpretation.
+      </p>
+      <p>
+        The <strong>Multi-Language Compare</strong> checkbox in the Gematria panel
+        automates this: for each word found matching your target value in one language,
+        it also shows what that same word totals in all other language systems — giving
+        you a quick cross-reference view.
+      </p>
+
+      <div class="callout info">
+        <p>The Gematria Reference page (linked in the footer) shows the complete value table
+        for every letter in every system. Use it to understand why a particular word has the
+        value it does.</p>
+      </div>
+    </div>
+
+    <hr class="doc-divider">
+
+    <!-- ====================================================
+         SECTION 6 — USING GEMATRIA IN THE APP
+         ==================================================== -->
+    <div class="doc-section" id="gematria-ui">
+      <div class="chapter-eyebrow">Chapter 6 — Gematria in the App</div>
+      <h2 class="doc-h2">The Gematria Panel</h2>
+
+      <p class="lead">
+        The Gematria panel sits below the ELS search controls in the left column.
+        It has three parts: a system selector, a live calculator, and a value search.
+      </p>
+
+      <h3 class="doc-h3" id="gematria-calculator">Live Calculator</h3>
+      <p>
+        Type any word or phrase into the <span class="ui-label">Calculate value</span>
+        field. The result box appears immediately showing:
+      </p>
+      <ul class="doc-list">
+        <li>The total gematria value in large numerals</li>
+        <li>A per-letter breakdown showing each letter's individual value as a small chip</li>
+        <li>The digital root (shown only when it differs from the total)</li>
+      </ul>
+      <p>
+        Clicking the large number copies it into the <span class="ui-label">Search by value</span>
+        field below, so you can immediately search the loaded text for other words with
+        the same value.
+      </p>
+      <p>
+        The system selector at the top of the panel controls which gematria system is used
+        for both the calculator and the search. When you change the primary language in the
+        header, the system selector automatically switches to the most appropriate system
+        for that language.
+      </p>
+
+      <h3 class="doc-h3" id="gematria-search">Searching by Value</h3>
+      <p>
+        Enter a numeric value in the <span class="ui-label">Search by value</span> field
+        and click <span class="ui-label blue">🔢 Search</span>. The program will scan
+        all the text currently loaded (from the last ELS search) and find every word or
+        letter sequence whose gematria in the selected system equals that value.
+      </p>
+
+      <div class="callout warning">
+        <p><strong>Note:</strong> A text must already be loaded before gematria search will work.
+        Perform an ELS search first (even with an empty result set) to load the text into memory,
+        then use gematria search on that text.</p>
+      </div>
+
+      <h3 class="doc-h3" id="gematria-modes">Word Mode vs. Sequence Mode</h3>
+      <p>
+        Two search modes are available, controlled by the radio buttons under
+        <span class="ui-label">Search mode</span>:
+      </p>
+      <dl class="doc-dl">
+        <dt>Words</dt>
+        <dd>Searches the original verse text (with spaces and punctuation preserved) for
+        individual words whose gematria value matches the target. Results show the word,
+        its verse reference, and the verse text with the matching word highlighted in amber.</dd>
+        <dt>Letter sequences</dt>
+        <dd>Searches the continuous normalized text for any run of consecutive letters
+        (minimum and maximum length configurable) whose cumulative gematria equals the target.
+        This is a more exhaustive search — similar in spirit to ELS, but based on value
+        rather than spelling. Results include a "View in Text" button that highlights the
+        matching letters in the Text View.</dd>
+      </dl>
+      <p>
+        Word mode is faster and more interpretively natural. Sequence mode can find
+        patterns that cross word boundaries — useful for advanced research.
+      </p>
+
+      <h3 class="doc-h3" id="gematria-multilang">Multi-Language Compare</h3>
+      <p>
+        When the <span class="ui-label">Compare across all languages</span> checkbox is
+        ticked, each result in the gematria results list gains a row of coloured chips
+        showing what value the same word has in every other language system. For example,
+        a Hebrew word matching your target value might show:
+      </p>
+      <div style="margin: 0.8rem 0; display: flex; flex-wrap: wrap; gap: 0.4rem;">
+        <span style="background:#ecf0f1;border:1px solid #bdc3c7;border-radius:3px;font-size:0.8rem;padding:0.15rem 0.5rem;font-family:monospace">LATIN: 87</span>
+        <span style="background:#ecf0f1;border:1px solid #bdc3c7;border-radius:3px;font-size:0.8rem;padding:0.15rem 0.5rem;font-family:monospace">KJV: 112</span>
+        <span style="background:#ecf0f1;border:1px solid #bdc3c7;border-radius:3px;font-size:0.8rem;padding:0.15rem 0.5rem;font-family:monospace">FINNISH: 99</span>
+        <span style="background:#ecf0f1;border:1px solid #bdc3c7;border-radius:3px;font-size:0.8rem;padding:0.15rem 0.5rem;font-family:monospace">GREEK: 340</span>
+      </div>
+      <p>
+        This lets you quickly check whether a match in one language has any cross-language
+        significance — for instance, whether the same word also equals 26 (YHWH) in the
+        English system.
+      </p>
+      <p>
+        Note that this comparison applies the default system for each language to the
+        <em>same word</em> as typed. Since the alphabets are different, letters not in
+        the target system's alphabet will have a value of 0 and be silently skipped.
+        This is most meaningful when comparing words that share a common transliteration.
+      </p>
+
+      <h3 class="doc-h3" id="gematria-reference-page">The Gematria Reference Page</h3>
+      <p>
+        The <a href="gematria_reference.html">Gematria Reference</a> page (accessible from
+        the footer of the main app) provides a complete visual lookup table for every
+        character in every system. It is a standalone page — it does not require a text
+        to be loaded. Use it to:
+      </p>
+      <ul class="doc-list">
+        <li>Look up the exact value of any Hebrew, Greek, Latin, English, or Finnish letter</li>
+        <li>Understand the differences between systems at a glance (especially useful for
+        comparing the three Hebrew systems)</li>
+        <li>Use the built-in calculator at the bottom to check any word in any system</li>
+        <li>Refer to the system notes table for a summary of all 12 systems</li>
+      </ul>
+    </div>
+
+    <hr class="doc-divider">
+
+    <!-- ====================================================
+         SECTION 7 — KABBALAH
+         ==================================================== -->
+    <div class="doc-section" id="kabbalah">
+      <div class="chapter-eyebrow">Chapter 7 — Kabbalah</div>
+      <h2 class="doc-h2">What Is Kabbalah?</h2>
+
+      <p class="lead">
+        Kabbalah (קַבָּלָה — literally "receiving" or "tradition") is the mystical dimension
+        of Judaism: a body of teachings that attempts to understand the hidden nature of God,
+        the structure of creation, and humanity's place within it. It is the spiritual
+        tradition from which both gematria and the idea of a hidden Bible Code directly descend.
+      </p>
+
+      <p>
+        Where mainstream rabbinic Judaism focuses on <em>halakha</em> (legal and ethical conduct)
+        and <em>midrash</em> (narrative interpretation), Kabbalah adds a third layer: <em>sod</em>
+        (secret or mystical meaning). Kabbalists hold that the Torah is not merely a historical
+        or legal text, but a living divine document whose every word, letter, and even the spaces
+        between letters encode cosmic truths about the nature of reality.
+      </p>
+
+      <p>
+        This is not metaphor for Kabbalists — it is a literal claim about language. The Hebrew
+        alphabet, in Kabbalistic thought, is not merely a writing system invented by humans.
+        Each of the 22 letters is a primordial force, a channel of divine energy through which
+        the world was spoken into existence. God created the universe <em>with</em> language,
+        and Hebrew letters are the building blocks of that creation. This theology makes
+        every technique for finding hidden meaning in Hebrew letters — gematria, ELS, Notarikon,
+        Temurah — not a game or a puzzle, but a form of contemplative prayer and theological inquiry.
+      </p>
+
+      <h3 class="doc-h3" id="kabbalah-origins">Origins and Historical Development</h3>
+      <p>
+        Kabbalah has roots stretching back to the earliest strata of Jewish mysticism, though
+        it crystallised as a distinct tradition in 12th–13th century southern France and Spain.
+        The key historical milestones are:
+      </p>
+
+      <div class="doc-table-wrap">
+        <table class="doc-table">
+          <thead>
+            <tr><th>Period</th><th>Development</th><th>Key Text / Figure</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>2nd–6th century CE</td>
+              <td>Merkabah mysticism — visionary ascent through heavenly palaces to the divine throne-chariot (merkabah)</td>
+              <td>Hekhalot literature; Sefer Yetzirah</td>
+            </tr>
+            <tr>
+              <td>c. 200–600 CE</td>
+              <td><em>Sefer Yetzirah</em> (Book of Formation) — the earliest kabbalistic text to systematically assign cosmic significance to each Hebrew letter and develop gematria as a framework</td>
+              <td>Attributed (apocryphally) to Abraham</td>
+            </tr>
+            <tr>
+              <td>c. 1150–1200</td>
+              <td><em>Sefer ha-Bahir</em> (Book of Illumination) — first text to use the term sefirot in the mystical sense; treats letters as living beings</td>
+              <td>Provence, France</td>
+            </tr>
+            <tr>
+              <td>c. 1280</td>
+              <td><em>Sefer ha-Zohar</em> (Book of Radiance) — the central text of Kabbalah, a mystical commentary on the Torah; most likely composed by Moses de León in Castile</td>
+              <td>Moses de León</td>
+            </tr>
+            <tr>
+              <td>1492</td>
+              <td>Expulsion of Jews from Spain scatters Kabbalistic scholarship across the Mediterranean; Safed (in Ottoman Palestine) becomes the new centre</td>
+              <td>Rabbi Bachya ben Asher notes ELS in Torah</td>
+            </tr>
+            <tr>
+              <td>16th century, Safed</td>
+              <td>Isaac Luria (the "Ari") revolutionises Kabbalah with his doctrine of <em>tzimtzum</em> (divine contraction), <em>shevirat ha-kelim</em> (breaking of the vessels), and <em>tikkun</em> (repair). His disciple Chaim Vital systematises his teachings.</td>
+              <td>Isaac Luria; Moses Cordovero</td>
+            </tr>
+            <tr>
+              <td>18th century</td>
+              <td>Hasidic Judaism popularises Kabbalistic ideas for ordinary people; gematria becomes a staple of Hasidic teaching</td>
+              <td>Baal Shem Tov (Israel ben Eliezer)</td>
+            </tr>
+            <tr>
+              <td>20th century</td>
+              <td>Academic Kabbalah scholarship founded by Gershom Scholem; Kabbalah becomes the subject of serious historical and philological study</td>
+              <td>Gershom Scholem; Moshe Idel</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 class="doc-h3" id="kabbalah-sefirot">The Sefirot and the Hebrew Letters</h3>
+      <p>
+        The central diagram of Kabbalah is the <em>Etz Chayyim</em> (Tree of Life): a network of
+        ten divine attributes called <strong>sefirot</strong> (singular: sefirah) connected by
+        22 paths. The sefirot are not separate gods or beings — they are aspects or
+        "vessels" of the one infinite God (called <em>Ein Sof</em>, "without end") through
+        which divine energy flows into the created world.
+      </p>
+
+      <div class="callout">
+        <p>
+          The ten sefirot are: Keter (Crown), Chokhmah (Wisdom), Binah (Understanding),
+          Chesed (Lovingkindness), Gevurah (Strength/Judgement), Tiferet (Beauty/Harmony),
+          Netzach (Victory/Eternity), Hod (Splendour), Yesod (Foundation), and Malkhut (Kingdom).
+          Their total gematria value in Hebrew is a subject of extensive Kabbalistic study.
+        </p>
+      </div>
+
+      <p>
+        Crucially, the 22 paths connecting the sefirot correspond to the 22 letters of the Hebrew
+        alphabet. Each letter is therefore both a sound, a number, and a cosmic pathway. The
+        <em>Sefer Yetzirah</em> divides the letters into three groups — three "mothers" (Alef, Mem,
+        Shin), seven "doubles" (letters with two pronunciations), and twelve "simples" — each
+        group governing a different aspect of space, time, and the human body.
+      </p>
+      <p>
+        This is why gematria is not felt by Kabbalists to be merely numerological play. Because
+        each letter is a divine pathway, two words sharing the same numerical value are not
+        merely numerically equivalent — they are connected through the same divine channel. The
+        number reveals a structural identity at the level of cosmic architecture.
+      </p>
+
+      <h3 class="doc-h3" id="kabbalah-pardes">The Four Levels of Interpretation (PaRDeS)</h3>
+      <p>
+        Classical Jewish hermeneutics recognises four levels of biblical interpretation,
+        whose initial letters form the word <strong>PaRDeS</strong> (פַּרְדֵּס — orchard, and
+        the origin of the English word "paradise"):
+      </p>
+
+      <dl class="doc-dl">
+        <dt>Peshat (פְּשָׁט)</dt>
+        <dd>The plain, literal meaning of the text. What the words say on the surface.
+        Standard biblical scholarship operates almost entirely at this level.</dd>
+
+        <dt>Remez (רֶמֶז)</dt>
+        <dd>"Hint" — allegorical or philosophical meaning encoded in the text. Gematria
+        belongs primarily here: numbers hint at deeper structural connections between ideas.
+        Medieval Jewish philosophers like Maimonides and Nachmanides worked extensively
+        at this level.</dd>
+
+        <dt>Derash (דְּרַשׁ)</dt>
+        <dd>"Seek" — midrashic and homiletical interpretation; the creative, narrative
+        exploration of what a text might teach beyond its surface. Rabbinic literature
+        (Talmud, Midrash) operates largely here.</dd>
+
+        <dt>Sod (סוֹד)</dt>
+        <dd>"Secret" — the mystical and esoteric meaning, accessible only through
+        Kabbalistic study. ELS and advanced gematria techniques belong here. This is the
+        level at which Kabbalah operates, and it is understood to be the most profound
+        and most dangerous layer of interpretation.</dd>
+      </dl>
+
+      <p>
+        The tradition holds that the Sod level should only be approached by those already
+        deeply grounded in the other three levels — hence the classical rule that Kabbalah
+        study was reserved for married men over forty with a solid foundation in Talmud.
+        Modern practice is considerably more open, but the principle of building up through
+        the levels remains a core pedagogical ideal.
+      </p>
+
+      <h3 class="doc-h3" id="kabbalah-notarikon">Notarikon and Temurah: Kabbalah's Other Letter Arts</h3>
+      <p>
+        Gematria is the best-known of Kabbalah's three primary letter-interpretation techniques,
+        but it works alongside two others:
+      </p>
+
+      <dl class="doc-dl">
+        <dt>Notarikon (נוֹטָרִיקוֹן)</dt>
+        <dd>Treating letters as acronyms. A word's letters are expanded into a phrase (each
+        letter becomes the first letter of a new word), or a phrase is compressed into an
+        acronym-word. The classic example: the word <em>Anochi</em> (אָנֹכִי — "I") at the
+        start of the Ten Commandments is read by some as an acronym for
+        <em>Ana Nafshi Ketavit Yehavit</em> ("I Myself wrote and gave [the Torah]").
+        The name PaRDeS itself is a notarikon of the four interpretive levels.</dd>
+
+        <dt>Temurah (תְּמוּרָה)</dt>
+        <dd>Letter substitution according to fixed cipher rules. The most famous is
+        <em>Atbash</em> (אתבש): the first letter of the alphabet (Alef) is swapped
+        with the last (Tav), the second (Bet) with the second-to-last (Shin), and so on.
+        Atbash appears in the Hebrew Bible itself: the prophet Jeremiah writes
+        "Sheshach" (שֵׁשַׁךְ) — an Atbash encoding of "Babel" (בָּבֶל, Babylon) —
+        apparently to disguise a politically dangerous reference. Another common substitution
+        is <em>Albam</em>, which divides the alphabet in half and swaps the two halves.
+        Kabbalistic literature lists dozens of such ciphers, some of recursive complexity.</dd>
+      </dl>
+
+      <p>
+        These three techniques — gematria, notarikon, and temurah — are collectively called
+        the <em>Sod ha-Otiyot</em> (Secret of the Letters) and form the core toolkit of
+        Kabbalistic textual analysis. Medieval scholars compiled encyclopaedic tables of
+        equivalences derived from all three methods, and Kabbalistic commentaries on scripture
+        often deploy all three simultaneously in a single interpretive move.
+      </p>
+
+      <h3 class="doc-h3" id="kabbalah-els">Kabbalah and the Bible Code</h3>
+      <p>
+        The modern ELS Bible Code movement did not emerge from nowhere — it has clear
+        Kabbalistic antecedents stretching back many centuries. The key figures in this lineage are:
+      </p>
+
+      <ul class="doc-list">
+        <li><strong>Rabbi Bahya ben Asher (Spain, 1255–1340)</strong> — In his Torah commentary,
+        he notes that the word TORAH (תורה) appears at 50-letter intervals starting from
+        the beginning of each of the Five Books of Moses, and that its letters appear at
+        42-letter intervals in the opening chapter of Genesis. He attributed this to divine
+        authorship and cited it as evidence that the Torah's structure itself is a form of
+        revelation.</li>
+
+        <li><strong>Rabbi Moses Cordovero (Safed, 1522–1570)</strong> — Compiled <em>Pardes
+        Rimonim</em> (Garden of Pomegranates), an encyclopaedic Kabbalistic work that codified
+        dozens of gematria methods and noted various ELS-like patterns in the Torah. He was
+        the first to systematise these observations into a comprehensive methodology.</li>
+
+        <li><strong>Rabbi Michael Ber Weissmandl (Slovakia, 1903–1957)</strong> — In the years
+        before World War II, Weissmandl — a Torah scholar and mathematician — found extensive
+        ELS patterns in the Torah using hand calculation (before computers existed). His
+        manuscript, posthumously published as <em>Torah Menuchasecha</em> (1958), is the direct
+        precursor to the computer-assisted ELS research of Witztum and Rips.</li>
+
+        <li><strong>Eliyahu Rips (Riga/Jerusalem, 1948–2024)</strong> — A professor of
+        mathematics at the Hebrew University of Jerusalem and an observant Jew, Rips was
+        directly motivated by Kabbalistic theology in his ELS research. He saw the statistical
+        patterns he found as confirmation of the Kabbalistic claim that the Torah's structure
+        transcends human authorship.</li>
+      </ul>
+
+      <div class="callout info">
+        <p>The Kabbalistic tradition holds that the Torah given to Moses at Sinai was transmitted
+        as a continuous stream of letters without spaces — <em>Torah she-bikhtav</em>. The spaces
+        and word divisions we read today were a secondary interpretation. ELS research implicitly
+        works with this idea: it removes all spaces and reads the letters as one continuous stream.</p>
+      </div>
+
+      <h3 class="doc-h3" id="kabbalah-western">Western Kabbalah and Cross-Cultural Influence</h3>
+      <p>
+        From the 15th century onwards, Christian humanist scholars became fascinated by
+        Kabbalah and began developing a parallel tradition of Christian and then Hermetic
+        Kabbalah (often spelled "Qabalah" in Western contexts to distinguish it from Jewish
+        tradition). This cross-pollination had enormous consequences for Western esotericism,
+        magic, and even — indirectly — for modern gematria systems in Latin and English.
+      </p>
+      <ul class="doc-list">
+        <li><strong>Giovanni Pico della Mirandola (Italy, 1463–1494)</strong> — The Italian
+        Renaissance philosopher was among the first Christian scholars to study Kabbalah
+        seriously. He argued in his <em>Conclusions</em> (1486) that Kabbalah provided proof
+        of Christian doctrines, setting off a vogue for Christian Kabbalah among Renaissance
+        humanists. The word "gematria" first appears in English through translations of his work.</li>
+
+        <li><strong>Heinrich Cornelius Agrippa (Germany, 1486–1535)</strong> — His
+        <em>De Occulta Philosophia</em> (1531) synthesised Kabbalah with Neoplatonism and
+        ceremonial magic, and defined the first systematic gematria system for the Latin
+        alphabet. This is the direct ancestor of the Latin ordinal gematria used in this program.</li>
+
+        <li><strong>The Hermetic Order of the Golden Dawn (UK, founded 1888)</strong> — The most
+        influential Western esoteric order of the 19th century made Qabalah the centrepiece of
+        its curriculum, associating the Hebrew letters with tarot cards, astrological signs, and
+        the 22 paths of the Tree of Life. Members included W.B. Yeats and Aleister Crowley.
+        This tradition is the origin of most modern English gematria systems.</li>
+      </ul>
+      <p>
+        The Finnish gematria system included in this program has no direct Kabbalistic heritage —
+        it is a modern adaptation of the ordinal logic for linguistic study. However, the existence
+        of gematria in the Finnish context reflects how broadly the idea of letter-number
+        relationships has spread across cultures in the modern era.
+      </p>
+    </div>
+
+    <hr class="doc-divider">
+
+    <!-- ====================================================
+         SECTION 8 — LINKS & RESOURCES
+         ==================================================== -->
+    <div class="doc-section" id="links">
+      <div class="chapter-eyebrow">Chapter 8 — Further Reading</div>
+      <h2 class="doc-h2">Links &amp; Resources</h2>
+
+      <p class="lead">
+        The following resources range from peer-reviewed academic papers to active
+        research communities and comprehensive reference sites. They are listed not as
+        endorsements of any particular conclusion, but as starting points for your own
+        investigation.
+      </p>
+
+      <!-- ---- CSS for link cards ---- -->
+      <style>
+        .link-card {
+          border: 1px solid var(--border);
+          border-radius: 8px;
+          padding: 1.1rem 1.3rem;
+          margin-bottom: 1rem;
+          background: var(--white);
+          transition: box-shadow 0.2s, border-color 0.2s;
+        }
+        .link-card:hover {
+          box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+          border-color: var(--gold);
+        }
+        .link-card-header {
+          display: flex;
+          align-items: flex-start;
+          gap: 0.8rem;
+          margin-bottom: 0.5rem;
+        }
+        .link-tag {
+          flex-shrink: 0;
+          font-size: 0.68rem;
+          font-weight: 600;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+          padding: 0.2rem 0.5rem;
+          border-radius: 3px;
+          margin-top: 0.1rem;
+        }
+        .link-tag.academic  { background: #dbeafe; color: #1e40af; }
+        .link-tag.critical  { background: #fee2e2; color: #991b1b; }
+        .link-tag.community { background: #dcfce7; color: #166534; }
+        .link-tag.reference { background: #fef3c7; color: #92400e; }
+        .link-tag.kabbalah  { background: #ede9fe; color: #5b21b6; }
+        .link-card a.link-title {
+          font-family: 'Crimson Pro', serif;
+          font-size: 1.12rem;
+          font-weight: 600;
+          color: var(--ink);
+          text-decoration: none;
+          border-bottom: 1px solid var(--gold);
+          line-height: 1.3;
+        }
+        .link-card a.link-title:hover { color: var(--blue); border-color: var(--blue); }
+        .link-card .link-url {
+          font-family: 'JetBrains Mono', monospace;
+          font-size: 0.75rem;
+          color: #aaa;
+          margin-top: 0.25rem;
+          margin-bottom: 0.5rem;
+          display: block;
+        }
+        .link-card .link-desc {
+          font-size: 0.88rem;
+          color: var(--ink-light);
+          line-height: 1.55;
+          margin: 0;
+        }
+        .link-section-h { margin: 2rem 0 0.8rem; }
+
+        /* YouTube embed */
+        .video-embed-wrapper {
+          margin: 2rem 0 2.5rem;
+        }
+        .video-embed-label {
+          font-size: 0.85rem;
+          color: #c8a84b;
+          margin-bottom: 0.6rem;
+          font-style: italic;
+        }
+        .video-embed-container {
+          position: relative;
+          padding-bottom: 56.25%; /* 16:9 */
+          height: 0;
+          overflow: hidden;
+          border-radius: 8px;
+          border: 1px solid rgba(200,168,75,0.3);
+          box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+        }
+        .video-embed-container iframe {
+          position: absolute;
+          top: 0; left: 0;
+          width: 100%; height: 100%;
+          border: none;
+        }
+      </style>
+
+      <!-- ====================== ACADEMIC ====================== -->
+      <h3 class="doc-h3 link-section-h" id="links-academic">Academic Papers</h3>
+      <p>These are the core peer-reviewed publications that define the scientific debate around Bible codes. Read the originals, not just summaries.</p>
+
+      <div class="link-card">
+        <div class="link-card-header">
+          <span class="link-tag academic">Academic · 1994</span>
+          <a class="link-title" href="https://www.researchgate.net/publication/38363092_Equidistant_Letter_Sequences_in_the_Book_of_Genesis" target="_blank" rel="noopener">
+            Witztum, Rips &amp; Rosenberg — "Equidistant Letter Sequences in the Book of Genesis" (1994)
+          </a>
+        </div>
+        <span class="link-url">Statistical Science, Vol. 9(3), pp. 429–438 · ResearchGate</span>
+        <p class="link-desc">
+          The paper that started everything. Published in the peer-reviewed journal <em>Statistical Science</em>
+          as a "challenging puzzle," it reported a p-value of 0.000016 for the clustering of rabbi names
+          with their birth and death dates as ELS in the Book of Genesis. The journal's editor noted
+          that referees "were baffled" by the result. This is essential primary reading — form your
+          own view of the methodology before accepting any secondary account.
+        </p>
+      </div>
+
+      <div class="link-card">
+        <div class="link-card-header">
+          <span class="link-tag critical">Critical · 1999</span>
+          <a class="link-title" href="https://projecteuclid.org/journals/statistical-science/volume-14/issue-2/Solving-the-Bible-Code-Puzzle/10.1214/ss/1009212243.full" target="_blank" rel="noopener">
+            McKay, Bar-Natan, Bar-Hillel &amp; Kalai — "Solving the Bible Code Puzzle" (1999)
+          </a>
+        </div>
+        <span class="link-url">Statistical Science, Vol. 14(2), pp. 150–173 · Project Euclid</span>
+        <p class="link-desc">
+          The definitive scientific refutation, published in the same journal five years later and
+          reviewed by four independent professional statisticians. The paper argues that the WRR
+          result was "fatally defective" — the extraordinary sensitivity of ELS statistics to small
+          changes in word spellings, combined with substantial flexibility in how the researchers
+          chose their data, is sufficient to explain the result without invoking hidden codes.
+          The paper demonstrated equivalent "codes" in a Hebrew translation of <em>War and Peace</em>.
+          The journal editor wrote in the introduction that "the puzzle has been solved."
+        </p>
+      </div>
+
+      <div class="link-card">
+        <div class="link-card-header">
+          <span class="link-tag critical">Critical · Ongoing</span>
+          <a class="link-title" href="https://users.cecs.anu.edu.au/~bdm/dilugim/torah.html" target="_blank" rel="noopener">
+            Brendan McKay's Bible Codes Research Archive
+          </a>
+        </div>
+        <span class="link-url">users.cecs.anu.edu.au/~bdm/dilugim/torah.html · Australian National University</span>
+        <p class="link-desc">
+          Professor McKay's comprehensive archive of the ELS debate, hosted at the Australian National
+          University. Includes the full text of multiple papers, point-by-point rebuttals of Bible Code
+          claims, demonstrations of equivalent "codes" found in <em>Moby Dick</em> and <em>War and Peace</em>,
+          and a detailed account of the Hebrew spelling flexibility that underlies the controversy.
+          Even if you believe in Bible codes, understanding the arguments here is essential for any
+          honest assessment of the evidence.
+        </p>
+      </div>
+
+      <div class="link-card">
+        <div class="link-card-header">
+          <span class="link-tag academic">Academic · 2019</span>
+          <a class="link-title" href="https://www.semanticscholar.org/paper/Solving-the-Bible-Code-Puzzle-McKay-Bar-Natan/a3a98b44e77d6d2aed61d390530094e25a9fe121" target="_blank" rel="noopener">
+            Wilson — "Bible Code, Revisited" (2019)
+          </a>
+        </div>
+        <span class="link-url">Perspectives on Science and Christian Faith, Vol. 71(1) · Semantic Scholar</span>
+        <p class="link-desc">
+          A more recent academic re-examination of the ELS controversy, attempting to assess where
+          the debate stands a quarter-century after the original papers. Useful for understanding
+          how the field has evolved and what (if anything) remains genuinely open. Approaches the
+          question from a perspective sympathetic to theistic inquiry while maintaining academic rigour.
+        </p>
+      </div>
+
+      <!-- ====================== CRITICAL ====================== -->
+      <h3 class="doc-h3 link-section-h" id="links-critical">Critical Analysis &amp; Balanced Commentary</h3>
+      <p>These resources approach the Bible Code with scepticism but provide fair-minded analysis that is valuable reading regardless of your position.</p>
+
+      <div class="link-card">
+        <div class="link-card-header">
+          <span class="link-tag critical">Critical · Wikipedia</span>
+          <a class="link-title" href="https://en.wikipedia.org/wiki/Bible_code" target="_blank" rel="noopener">
+            Wikipedia: Bible Code
+          </a>
+        </div>
+        <span class="link-url">en.wikipedia.org/wiki/Bible_code</span>
+        <p class="link-desc">
+          A thorough and well-sourced overview of the entire ELS controversy, covering the WRR paper,
+          the MBBK rebuttal, subsequent experiments, and the positions of notable figures including
+          Nobel laureate Robert Aumann, who called the evidence "suggestive but not conclusive."
+          The article covers both proponent and critic arguments fairly and includes extensive
+          references to primary sources.
+        </p>
+      </div>
+
+      <div class="link-card">
+        <div class="link-card-header">
+          <span class="link-tag reference">Essay · First Things</span>
+          <a class="link-title" href="https://firstthings.com/the-bible-by-numbers/" target="_blank" rel="noopener">
+            "The Bible by Numbers" — First Things
+          </a>
+        </div>
+        <span class="link-url">firstthings.com/the-bible-by-numbers/</span>
+        <p class="link-desc">
+          A thoughtful philosophical essay engaging with both the statistical claims and the
+          theological implications of Bible Code research. Draws interesting parallels between
+          the statistical methodology used in ELS research and arguments from biological design.
+          Takes the question seriously without being credulous. Useful for thinking through the
+          philosophical stakes of the debate, not just the statistical ones.
+        </p>
+      </div>
+
+      <!-- ====================== RESEARCH COMMUNITIES ====================== -->
+      <h3 class="doc-h3 link-section-h" id="links-research">Research Communities &amp; Active Projects</h3>
+      <p>These are active research projects and communities where ELS work is ongoing. Approach with the critical framework from Chapter 2.</p>
+
+      <div class="link-card">
+        <div class="link-card-header">
+          <span class="link-tag community">Research · Active</span>
+          <a class="link-title" href="https://torahbiblecodes.com" target="_blank" rel="noopener">
+            TorahBibleCodes.com
+          </a>
+        </div>
+        <span class="link-url">torahbiblecodes.com</span>
+        <p class="link-desc">
+          An open-source research project continuing the work of Witztum, Rips, and Rosenberg,
+          led until his death in 2024 by Professor Eliyahu Rips himself of the Hebrew University
+          of Jerusalem. Provides free, open-source Python ELS search software (TorahBibleCodes),
+          academic white papers, and a repository of claimed findings. The site is research-oriented
+          rather than popular, and includes discussion of experimental methodology. The software
+          allows you to run your own experiments and verify or challenge reported results.
+        </p>
+      </div>
+
+      <div class="link-card">
+        <div class="link-card-header">
+          <span class="link-tag community">Research · Archive</span>
+          <a class="link-title" href="https://www.math.toronto.edu/drorbn/Codes/Nations/WRR2/index.html" target="_blank" rel="noopener">
+            Dror Bar-Natan's ELS Research Archive — University of Toronto
+          </a>
+        </div>
+        <span class="link-url">math.toronto.edu/drorbn/Codes — University of Toronto Mathematics</span>
+        <p class="link-desc">
+          Professor Bar-Natan's academic archive of ELS research, hosted at the University of Toronto's
+          Department of Mathematics. Contains his own ELS papers, including extensions of the WRR
+          methodology to the "70 nations" experiment and detailed analyses of what went wrong
+          with the original Great Rabbis experiment. Invaluable primary source material from
+          one of the foremost experts on the mathematics of ELS.
+        </p>
+      </div>
+
+      <!-- ====================== GEMATRIA ====================== -->
+      <h3 class="doc-h3 link-section-h" id="links-gematria">Gematria Resources</h3>
+
+      <div class="link-card">
+        <div class="link-card-header">
+          <span class="link-tag reference">Reference · Chabad</span>
+          <a class="link-title" href="https://www.chabad.org/library/article_cdo/aid/5541252/jewish/What-Is-Gematria.htm" target="_blank" rel="noopener">
+            Chabad.org — "What Is Gematria?"
+          </a>
+        </div>
+        <span class="link-url">chabad.org · Chabad-Lubavitch World Headquarters</span>
+        <p class="link-desc">
+          A clear and authoritative introduction to gematria from within the Jewish tradition,
+          written by rabbinical scholars for a general audience. Explains the classical Mispar
+          Hechrachi values, the relationship between gematria and the four levels of Torah
+          interpretation (PaRDeS), and classical examples including the famous Amalek/safek
+          (doubt) equivalence. Chabad is one of the most respected Orthodox Jewish educational
+          organisations worldwide.
+        </p>
+      </div>
+
+      <div class="link-card">
+        <div class="link-card-header">
+          <span class="link-tag reference">Reference · My Jewish Learning</span>
+          <a class="link-title" href="https://www.myjewishlearning.com/article/gematria/" target="_blank" rel="noopener">
+            My Jewish Learning — "Gematria"
+          </a>
+        </div>
+        <span class="link-url">myjewishlearning.com</span>
+        <p class="link-desc">
+          A well-researched historical overview of gematria tracing its development from Pythagoras
+          and Greek isopsephy through the Baraita of the Thirty-Two Rules (200 CE), the Sefer Yetzirah,
+          the medieval Hasidei Ashkenaz, Moses Cordovero, and into the Hasidic movement. Includes
+          a complete Hebrew letter value table and honest discussion of the practice's limitations.
+          Good starting point for understanding gematria as a living tradition rather than an
+          abstract numerical system.
+        </p>
+      </div>
+
+      <div class="link-card">
+        <div class="link-card-header">
+          <span class="link-tag reference">Reference · Wikipedia</span>
+          <a class="link-title" href="https://en.wikipedia.org/wiki/Gematria" target="_blank" rel="noopener">
+            Wikipedia: Gematria
+          </a>
+        </div>
+        <span class="link-url">en.wikipedia.org/wiki/Gematria</span>
+        <p class="link-desc">
+          An exceptionally comprehensive reference article covering all major gematria systems across
+          cultures — Hebrew (with all variant systems including the obscure ones not in this program),
+          Greek isopsephy, Latin, Arabic <em>abjad</em>, and English. Includes the history of Western
+          Qabalah through Agrippa, John Dee, and the Hermetic Order of the Golden Dawn. Also lists
+          the 231 replacement ciphers referenced in the Sefer Yetzirah. Essential reading if you
+          want to go deeper than what this program covers.
+        </p>
+      </div>
+
+      <!-- ====================== KABBALAH ====================== -->
+      <h3 class="doc-h3 link-section-h" id="links-kabbalah">Kabbalah Study</h3>
+
+      <div class="link-card">
+        <div class="link-card-header">
+          <span class="link-tag kabbalah">Kabbalah · Wikipedia</span>
+          <a class="link-title" href="https://en.wikipedia.org/wiki/Kabbalah" target="_blank" rel="noopener">
+            Wikipedia: Kabbalah
+          </a>
+        </div>
+        <span class="link-url">en.wikipedia.org/wiki/Kabbalah</span>
+        <p class="link-desc">
+          A thorough scholarly overview of Kabbalah as a historical phenomenon, covering its origins
+          in the Bahir and Zohar, the Lurianic revolution, Hasidic popularisation, and the academic
+          study of Kabbalah from Gershom Scholem onwards. Covers both traditional Jewish Kabbalah
+          and Western Hermetic Qabalah, with clear distinctions between the two. An excellent map of
+          the field before diving into primary sources.
+        </p>
+      </div>
+
+      <div class="link-card">
+        <div class="link-card-header">
+          <span class="link-tag kabbalah">Kabbalah · Reference</span>
+          <a class="link-title" href="https://www.encyclopedia.com/philosophy-and-religion/bible/bible-general/gematria" target="_blank" rel="noopener">
+            Encyclopedia.com — "Gematria" (Jewish Encyclopedia tradition)
+          </a>
+        </div>
+        <span class="link-url">encyclopedia.com</span>
+        <p class="link-desc">
+          Drawn from the tradition of the Jewish Encyclopedia, this article covers gematria's role
+          within Kabbalah in scholarly depth — including the <em>milui</em> system (spelling out
+          letter names and summing their values), the Hasidei Ashkenaz tradition, Eleazar of Worms'
+          use of gematria across whole sentences, and the fascinating <em>Atbash</em> cipher already
+          present in the biblical text of Jeremiah. More academically oriented than popular introductions.
+        </p>
+      </div>
+
+      <div class="link-card">
+        <div class="link-card-header">
+          <span class="link-tag kabbalah">Kabbalah · Practitioner</span>
+          <a class="link-title" href="https://matthewponak.com/2024/04/03/4-types-of-gematria/" target="_blank" rel="noopener">
+            Matthew Ponak — "4 Types of Gematria" (2024)
+          </a>
+        </div>
+        <span class="link-url">matthewponak.com</span>
+        <p class="link-desc">
+          A practitioner's guide to the four core gematria techniques — standard gematria, Atbash,
+          Notarikon, and Milui — written from the perspective of someone engaged in Kabbalistic study
+          as a living practice. Includes worked examples and explains how these methods are combined
+          in actual Kabbalistic interpretation. A useful complement to more historical or critical
+          academic treatments, showing how the practice is actually used rather than merely described.
+        </p>
+      </div>
+
+    </div>
+
+    <hr class="doc-divider">
+
+    <!-- closing note -->
+    <div class="doc-section">
+      <div class="callout">
+        <p>
+          Bible Code Explorer is an educational tool. The patterns it finds are real — they genuinely
+          exist in the text. What remains deeply uncertain is whether they are <em>meaningful</em>.
+          Approach your discoveries with curiosity, rigour, and a healthy sense of wonder.
+        </p>
+      </div>
+      <p style="margin-top:1.5rem; font-size:0.85rem; color:#999;">
+        Bible Code Explorer v1.1 · Educational &amp; Research Tool ·
+        <a href="index.html" style="color:#999">Back to App</a> ·
+        <a href="gematria_reference.html" style="color:#999">Gematria Reference</a>
+      </p>
+    </div>
+
+  </main>
+</div>
+
+<a href="#" id="back-to-top" title="Back to top">↑</a>
+
+<script>
+  // ---- Reading progress bar ----
+  const bar = document.getElementById('reading-progress');
+  window.addEventListener('scroll', () => {
+    const total = document.body.scrollHeight - window.innerHeight;
+    bar.style.width = (window.scrollY / total * 100) + '%';
+
+    // Back to top
+    const btn = document.getElementById('back-to-top');
+    btn.classList.toggle('visible', window.scrollY > 400);
+  });
+
+  // ---- Active sidebar link on scroll ----
+  const sections = document.querySelectorAll('.doc-section[id], h3[id]');
+  const links = document.querySelectorAll('#sidebar a');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        const active = document.querySelector(`#sidebar a[href="#${entry.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+
+  document.querySelectorAll('[id]').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
