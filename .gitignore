@@ -1,0 +1,22 @@
+# Bible Code Explorer .gitignore
+
+# Large Bible JSON files (optional - remove if you want to commit them)
+data/texts/*.json
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp

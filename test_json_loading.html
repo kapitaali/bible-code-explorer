@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bible JSON Loading Test</title>
+  <style>
+    body {
+      font-family: 'Courier New', monospace;
+      padding: 2rem;
+      background: #f5f5f5;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    h1 {
+      color: #2c3e50;
+    }
+    .test-section {
+      background: white;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .success {
+      color: #27ae60;
+      font-weight: bold;
+    }
+    .error {
+      color: #e74c3c;
+      font-weight: bold;
+    }
+    .warning {
+      color: #f39c12;
+      font-weight: bold;
+    }
+    .info {
+      color: #3498db;
+    }
+    pre {
+      background: #ecf0f1;
+      padding: 1rem;
+      border-radius: 4px;
+      overflow-x: auto;
+      font-size: 0.9rem;
+    }
+    button {
+      background: #3498db;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1rem;
+      margin: 0.5rem;
+    }
+    button:hover {
+      background: #2980b9;
+    }
+    .result-box {
+      margin-top: 1rem;
+      padding: 1rem;
+      background: #f8f9fa;
+      border-left: 4px solid #3498db;
+    }
+  </style>
+</head>
+<body>
+  <h1>📖 Bible JSON Loading Test Utility</h1>
+  
+  <div class="test-section">
+    <h2>🔍 Test JSON File Loading</h2>
+    <p>Click the buttons below to test loading Bible JSON files:</p>
+    
+    <button onclick="testLanguage('latin')">Test Latin</button>
+    <button onclick="testLanguage('kjv')">Test KJV English</button>
+    <button onclick="testLanguage('finnish')">Test Finnish</button>
+    <button onclick="testLanguage('hebrew')">Test Hebrew</button>
+    <button onclick="testLanguage('greek')">Test Greek</button>
+    <button onclick="testAllLanguages()">Test All Languages</button>
+    
+    <div id="results" class="result-box" style="display: none;">
+      <h3>Results:</h3>
+      <div id="results-content"></div>
+    </div>
+  </div>
+
+  <div class="test-section">
+    <h2>📋 Console Output</h2>
+    <p>Check your browser console (F12) for detailed loading messages.</p>
+  </div>
+
+  <div class="test-section">
+    <h2>📁 Expected File Structure</h2>
+    <pre>
+data/
+└── texts/
+    ├── latin_bible.json
+    ├── kjv.json
+    ├── finnish_bible.json
+    ├── hebrew_ot.json
+    └── greek_nt.json
+    </pre>
+  </div>
+
+  <div class="test-section">
+    <h2>✅ JSON Validation Checklist</h2>
+    <p>Your JSON files should have:</p>
+    <ul>
+      <li>✓ Valid JSON syntax</li>
+      <li>✓ "metadata" object with required fields</li>
+      <li>✓ "books" array with at least one book</li>
+      <li>✓ Each book has "id", "chapters" array</li>
+      <li>✓ Each chapter has "verses" array</li>
+      <li>✓ Each verse has "number" and "text"</li>
+    </ul>
+  </div>
+
+  <!-- Load required scripts -->
+  <script src="js/languages/latinHandler.js"></script>
+  <script src="js/languages/kjvHandler.js"></script>
+  <script src="js/languages/finnishHandler.js"></script>
+  <script src="js/languages/hebrewHandler.js"></script>
+  <script src="js/languages/greekHandler.js"></script>
+  <script src="js/data/dataLoader.js"></script>
+
+  <script>
+    // Initialize DataLoader
+    const dataLoader = new DataLoader();
+
+    function showResults() {
+      document.getElementById('results').style.display = 'block';
+    }
+
+    function addResult(message, type = 'info') {
+      const resultsContent = document.getElementById('results-content');
+      const div = document.createElement('div');
+      div.className = type;
+      div.textContent = message;
+      resultsContent.appendChild(div);
+    }
+
+    function clearResults() {
+      document.getElementById('results-content').innerHTML = '';
+    }
+
+    async function testLanguage(language) {
+      clearResults();
+      showResults();
+      
+      addResult(`Testing ${language}...`, 'info');
+      console.log(`\n${'='.repeat(50)}`);
+      console.log(`Testing ${language.toUpperCase()}`);
+      console.log('='.repeat(50));
+
+      try {
+        const startTime = performance.now();
+        const data = await dataLoader.loadBibleText(language);
+        const endTime = performance.now();
+        const loadTime = (endTime - startTime).toFixed(2);
+
+        if (data) {
+          addResult(`✅ SUCCESS: Loaded ${language}`, 'success');
+          addResult(`   Load time: ${loadTime}ms`, 'info');
+          addResult(`   Books: ${data.books.length}`, 'info');
+          
+          if (data.books.length > 0) {
+            const firstBook = data.books[0];
+            addResult(`   First book: ${firstBook.name} (${firstBook.chapters.length} chapters)`, 'info');
+            
+            if (firstBook.chapters.length > 0) {
+              const firstChapter = firstBook.chapters[0];
+              addResult(`   First chapter verses: ${firstChapter.verses.length}`, 'info');
+              
+              if (firstChapter.verses.length > 0) {
+                const firstVerse = firstChapter.verses[0];
+                addResult(`   First verse text: "${firstVerse.text.substring(0, 50)}..."`, 'info');
+                
+                if (firstVerse.normalized) {
+                  addResult(`   Normalized: "${firstVerse.normalized.substring(0, 50)}..."`, 'info');
+                } else {
+                  addResult(`   ⚠️ No normalized text (will be auto-generated)`, 'warning');
+                }
+              }
+            }
+          }
+
+          // Check if loaded from JSON or stub
+          console.log('Data source:', data.metadata.source || 'Unknown');
+          
+        } else {
+          addResult(`❌ FAILED: Could not load ${language}`, 'error');
+        }
+
+      } catch (error) {
+        addResult(`❌ ERROR: ${error.message}`, 'error');
+        console.error(`Error testing ${language}:`, error);
+      }
+
+      console.log('='.repeat(50) + '\n');
+    }
+
+    async function testAllLanguages() {
+      clearResults();
+      showResults();
+      
+      const languages = ['latin', 'kjv', 'finnish', 'hebrew', 'greek'];
+      
+      addResult('Testing all languages...', 'info');
+      addResult('', 'info');
+
+      for (const lang of languages) {
+        await testLanguage(lang);
+        addResult('', 'info'); // Empty line separator
+      }
+
+      // Show cache stats
+      const cacheStats = dataLoader.getCacheStats();
+      addResult('='.repeat(50), 'info');
+      addResult('Cache Statistics:', 'info');
+      addResult(`Cached languages: ${cacheStats.cachedLanguages.join(', ')}`, 'info');
+      addResult(`Cache size: ${cacheStats.cacheSize}`, 'info');
+    }
+
+    // Show instructions on load
+    window.addEventListener('load', () => {
+      console.log(`
+╔══════════════════════════════════════════════════════════════╗
+║                                                              ║
+║           BIBLE JSON LOADING TEST UTILITY                    ║
+║                                                              ║
+║  Click the buttons above to test loading Bible JSON files   ║
+║                                                              ║
+║  Expected file locations:                                    ║
+║  • data/texts/latin_bible.json                              ║
+║  • data/texts/kjv.json                                      ║
+║  • data/texts/finnish_bible.json                            ║
+║  • data/texts/hebrew_ot.json                                ║
+║  • data/texts/greek_nt.json                                 ║
+║                                                              ║
+║  If files are not found, stub data will be used instead.    ║
+║                                                              ║
+╚══════════════════════════════════════════════════════════════╝
+      `);
+    });
+  </script>
+</body>
+</html>

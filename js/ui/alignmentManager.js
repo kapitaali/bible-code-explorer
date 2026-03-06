@@ -2,6 +2,7 @@
 class AlignmentManager {
   constructor() {
     this.alignmentCache = new Map();
+    this.currentAlignment = null;
   }
 
   /**
@@ -14,24 +15,40 @@ class AlignmentManager {
       return this.alignmentCache.get(cacheKey);
     }
 
-    // Load both texts
-    const primaryText = await window.dataLoader.loadBookRange(
-      primaryLang, primaryBook, primaryChapter, primaryChapter
-    );
-    
-    const secondaryText = await window.dataLoader.loadBookRange(
-      secondaryLang, primaryBook, primaryChapter, primaryChapter
-    );
+    try {
+      // Load both texts
+      const primaryText = await window.dataLoader.loadBookRange(
+        primaryLang, primaryBook, primaryChapter, primaryChapter
+      );
+      
+      const secondaryText = await window.dataLoader.loadBookRange(
+        secondaryLang, primaryBook, primaryChapter, primaryChapter
+      );
 
-    if (!primaryText || !secondaryText) {
+      if (!primaryText || !secondaryText) {
+        console.warn('Could not load texts for alignment:', {primaryLang, secondaryLang, primaryBook, primaryChapter});
+        return null;
+      }
+
+      if (!primaryText.chapters || primaryText.chapters.length === 0) {
+        console.warn('Primary text has no chapters');
+        return null;
+      }
+
+      if (!secondaryText.chapters || secondaryText.chapters.length === 0) {
+        console.warn('Secondary text has no chapters');
+        return null;
+      }
+
+      // Perform alignment
+      const alignment = this.performAlignment(primaryText, secondaryText);
+      
+      this.alignmentCache.set(cacheKey, alignment);
+      return alignment;
+    } catch (error) {
+      console.error('Error in alignTexts:', error);
       return null;
     }
-
-    // Perform alignment
-    const alignment = this.performAlignment(primaryText, secondaryText);
-    
-    this.alignmentCache.set(cacheKey, alignment);
-    return alignment;
   }
 
   performAlignment(primaryText, secondaryText) {
@@ -99,27 +116,38 @@ class AlignmentManager {
   }
 
   /**
-   * Render dual-pane display
+   * Render dual-pane display with current search results
    */
-  async renderDualPane(primaryLang, book, chapter) {
+  async renderDualPane(primaryLang, book, chapter, searchResults) {
     const container = document.getElementById('dual-display');
+    
+    if (!container) {
+      console.error('Dual display container not found');
+      return;
+    }
+
+    // Get testament for this book
     const testament = window.dataLoader.getTestament(book);
     const secondaryLang = this.getSecondaryLanguage(testament);
 
+    console.log('Rendering dual pane:', {primaryLang, book, chapter, testament, secondaryLang});
+
     try {
+      // Load the alignment
       const alignment = await this.alignTexts(primaryLang, book, chapter, secondaryLang);
       
-      if (!alignment) {
+      if (!alignment || alignment.length === 0) {
         container.innerHTML = `
           <div class="empty-state">
             <div class="empty-state-icon">❌</div>
             <div class="empty-state-text">Unable to load alignment</div>
-            <div class="empty-state-subtext">Text data not available for both languages</div>
+            <div class="empty-state-subtext">Could not load ${secondaryLang} text for ${book} ${chapter}</div>
           </div>
         `;
         return;
       }
 
+      this.currentAlignment = alignment;
       const isRTL = secondaryLang === 'hebrew';
       
       let html = `
@@ -138,7 +166,7 @@ class AlignmentManager {
               <h3>${secondaryLang.toUpperCase()}</h3>
             </div>
             <div class="pane-content">
-              ${this.buildSecondaryContent(alignment)}
+              ${this.buildSecondaryContent(alignment, isRTL)}
             </div>
           </div>
         </div>
@@ -183,7 +211,7 @@ class AlignmentManager {
     return html;
   }
 
-  buildSecondaryContent(alignment) {
+  buildSecondaryContent(alignment, isRTL) {
     let html = '';
     
     for (const verseAlignment of alignment) {
@@ -253,6 +281,15 @@ class AlignmentManager {
         primaryWords.forEach(w => w.classList.remove('highlighted'));
       });
     });
+  }
+
+  /**
+   * Update dual pane when chapter changes
+   */
+  async updateForChapter(primaryLang, book, startChapter, endChapter) {
+    // For now, just show the first chapter
+    // In future, could show multiple chapters
+    await this.renderDualPane(primaryLang, book, startChapter, null);
   }
 }
 

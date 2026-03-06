@@ -262,6 +262,15 @@ class LayoutManager {
       this.clearResults();
     });
 
+    // Reference language checkbox
+    document.getElementById('show-reference-lang').addEventListener('change', (e) => {
+      if (e.target.checked && this.currentResults) {
+        // Switch to dual view and render it
+        this.switchView('dual');
+        this.updateDualPane();
+      }
+    });
+
     // Export buttons
     document.getElementById('export-csv-btn').addEventListener('click', () => {
       if (this.currentResults) {
@@ -356,6 +365,11 @@ class LayoutManager {
       
       // Update text display
       window.displayManager.loadText(results.text, results.verseMap, params.language);
+      
+      // If reference language is enabled, update dual pane
+      if (document.getElementById('show-reference-lang').checked) {
+        this.updateDualPane();
+      }
       
       // Enable export buttons
       document.getElementById('export-csv-btn').disabled = false;
@@ -533,6 +547,26 @@ class LayoutManager {
     const results = this.currentResults.results || [];
     
     window.displayManager.renderMatrix(this.currentText, width, results);
+  }
+
+  async updateDualPane() {
+    if (!this.currentResults || !this.currentResults.params) {
+      console.warn('No current results to display in dual pane');
+      return;
+    }
+
+    const params = this.currentResults.params;
+    
+    try {
+      await window.alignmentManager.renderDualPane(
+        params.language,
+        params.book,
+        params.chapterStart,
+        this.currentResults
+      );
+    } catch (error) {
+      console.error('Error updating dual pane:', error);
+    }
   }
 
   setStatus(message) {
