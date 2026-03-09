@@ -498,9 +498,14 @@ class LayoutManager {
             <span>Sequence: ${result.sequence}</span>
             <span>Span: ${result.positions.length} letters</span>
           </div>
-          <button class="view-btn" data-result-index="${index}">
-            👁️ View in Text
-          </button>
+          <div class="result-btn-row">
+            <button class="view-btn" data-result-index="${index}">
+              👁️ View in Text
+            </button>
+            <button class="stream-btn" data-result-index="${index}" title="Read the full skip stream around this result">
+              📜 Read Stream
+            </button>
+          </div>
         </div>
       `;
     });
@@ -511,6 +516,13 @@ class LayoutManager {
       btn.addEventListener('click', (e) => {
         const index = parseInt(e.target.dataset.resultIndex);
         this.highlightResult(results[index]);
+      });
+    });
+
+    resultsList.querySelectorAll('.stream-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const index = parseInt(e.target.dataset.resultIndex);
+        this.showSkipStream(results[index]);
       });
     });
   }
@@ -642,6 +654,142 @@ class LayoutManager {
     } catch (error) {
       console.error('Error updating dual pane:', error);
     }
+  }
+
+  // ----------------------------------------------------------------
+  // SKIP STREAM READER
+  // Extracts the full sequence of characters at a given skip interval
+  // centred on the found word, so the user can read context.
+  // ----------------------------------------------------------------
+
+  showSkipStream(result) {
+    const text = this.currentText;
+    if (!text) return;
+
+    const skip = Math.abs(result.skip);
+    const direction = result.skip < 0 ? -1 : 1;
+    const wordLen = result.positions.length;
+
+    // The "anchor" is the first letter of the found word in the continuous text
+    const anchor = result.startPosition;
+
+    // Build the full stream: walk backwards then forwards from anchor by skip
+    // We want ~40 characters each side of the word (i.e. 40 steps at this skip)
+    const CONTEXT_STEPS = 40;
+    const streamChars = [];
+    const highlightStart = CONTEXT_STEPS; // index in streamChars where word begins
+    
+    // Backwards context (steps before the word)
+    for (let i = CONTEXT_STEPS; i >= 1; i--) {
+      const pos = anchor - i * skip * direction;
+      streamChars.push(pos >= 0 && pos < text.length ? text[pos] : '·');
+    }
+
+    // The word itself
+    for (let i = 0; i < wordLen; i++) {
+      const pos = anchor + i * skip * direction;
+      streamChars.push(pos >= 0 && pos < text.length ? text[pos] : '·');
+    }
+
+    // Forward context (steps after the word)
+    for (let i = 1; i <= CONTEXT_STEPS; i++) {
+      const pos = anchor + (wordLen - 1 + i) * skip * direction;
+      streamChars.push(pos >= 0 && pos < text.length ? text[pos] : '·');
+    }
+
+    const highlightEnd = highlightStart + wordLen;
+    
+    // Build display: chunk into groups of 10 with the word highlighted
+    // Also build a "word-spaced" version chunked every 10 for readability
+    const CHUNK = 10;
+    let chunkedHtml = '';
+    let rawLine = '';
+    for (let i = 0; i < streamChars.length; i++) {
+      if (i > 0 && i % CHUNK === 0) {
+        chunkedHtml += '<span class="stream-spacer"> </span>';
+        rawLine += ' ';
+      }
+      const ch = streamChars[i];
+      if (i >= highlightStart && i < highlightEnd) {
+        chunkedHtml += `<span class="stream-found">${ch}</span>`;
+      } else {
+        chunkedHtml += `<span class="stream-char">${ch}</span>`;
+      }
+      rawLine += ch;
+    }
+
+    // Also build a clean copyable string (spaces every 10)
+    const copyText = rawLine;
+
+    // Verse references for context — find what verse each stream position maps to
+    const verseMap = this.currentResults?.verseMap || [];
+    const contextVerses = new Set();
+    for (let i = 0; i < streamChars.length; i++) {
+      const pos = anchor + (i - CONTEXT_STEPS) * skip * direction;
+      if (pos < 0 || pos >= text.length) continue;
+      const v = verseMap.find(v => pos >= v.start && pos <= v.end);
+      if (v) contextVerses.add(`${v.chapter}:${v.verse}`);
+    }
+    const verseList = [...contextVerses].slice(0, 12).join('  ·  ');
+
+    // Show modal
+    this._openStreamModal({
+      term: result.term,
+      skip: result.skip,
+      chunkedHtml,
+      copyText,
+      verseList,
+      wordLen
+    });
+  }
+
+  _openStreamModal({ term, skip, chunkedHtml, copyText, verseList, wordLen }) {
+    // Remove existing modal if any
+    document.getElementById('skip-stream-modal')?.remove();
+
+    const modal = document.createElement('div');
+    modal.id = 'skip-stream-modal';
+    modal.className = 'skip-stream-modal';
+    modal.innerHTML = `
+      <div class="skip-stream-dialog">
+        <div class="skip-stream-header">
+          <span class="skip-stream-title">📜 Skip Stream — <em>${term}</em> at skip ${skip}</span>
+          <button class="skip-stream-close" title="Close">✕</button>
+        </div>
+        <div class="skip-stream-subtitle">
+          Every ${Math.abs(skip)}${skip < 0 ? 'th letter backwards' : 'th letter'} from the text.
+          <span class="stream-found-label">■</span> = matched word &nbsp;·&nbsp;
+          40 steps of context on each side
+        </div>
+        <div class="skip-stream-body">
+          <div class="stream-display" ${['hebrew'].includes(window.layoutManager?.selectedLanguages?.primary) ? 'dir="rtl"' : ''}>${chunkedHtml}</div>
+        </div>
+        <div class="skip-stream-verses">Spans verses: ${verseList || '—'}</div>
+        <div class="skip-stream-footer">
+          <button class="skip-stream-copy secondary-btn">📋 Copy as text</button>
+          <span class="skip-stream-hint">Read left→right. Spaces inserted every 10 characters for readability.</span>
+        </div>
+      </div>
+    `;
+
+    // Close on backdrop click
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) modal.remove();
+    });
+    modal.querySelector('.skip-stream-close').addEventListener('click', () => modal.remove());
+    modal.querySelector('.skip-stream-copy').addEventListener('click', () => {
+      navigator.clipboard?.writeText(copyText).then(() => {
+        const btn = modal.querySelector('.skip-stream-copy');
+        btn.textContent = '✓ Copied!';
+        setTimeout(() => btn.textContent = '📋 Copy as text', 1500);
+      });
+    });
+
+    // Escape key
+    const onKey = (e) => { if (e.key === 'Escape') { modal.remove(); document.removeEventListener('keydown', onKey); } };
+    document.addEventListener('keydown', onKey);
+
+    document.body.appendChild(modal);
   }
 
   _updateReferenceLangToggle(lang) {
